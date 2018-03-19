@@ -20,7 +20,6 @@ echo " ZZZZZZZZZZZZZZ EEEEEEEEEEE MMM      MMM OOOOOOOOOO
    @@@@@     @       @@@@@     @       @@@@@     @
     @@                @@                @@    
      @                 @                 @  
-
 "
 sleep 10
 
