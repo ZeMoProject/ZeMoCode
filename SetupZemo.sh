@@ -3,7 +3,7 @@
 cd ~
 
 #Move .bashrc for autostart
-cp ~/ZeMoCode/bashrc ~/.bashrc
+cp ~/ZeMoCode/bashrc ~/.profile
 
 #Install monitor drivers
 wget https://raw.githubusercontent.com/adafruit/Adafruit-PiTFT-Helper/master/adafruit-pitft-helper2.sh
