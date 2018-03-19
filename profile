@@ -1,6 +1,9 @@
 #.profile file to autostart
+Cyan='\033[1;36m'
+NC='\033[0;0m'
 
-echo " ZZZZZZZZZZZZZZ EEEEEEEEEEE MMM      MMM OOOOOOOOOO
+echo -e "${Cyan} 
+ ZZZZZZZZZZZZZZ EEEEEEEEEEE MMM      MMM OOOOOOOOOO
  ZZZZZZZZZZZZZ  EEEEEEEEEEE MMMM    MMMM OOOOOOOOOO
          ZZZZ               MMMMMMMMMMMM OO      OO
        ZZZZ     EEEEEEEEEEE MMMMMMMMMMMM OO      OO
@@ -18,9 +21,8 @@ echo " ZZZZZZZZZZZZZZ EEEEEEEEEEE MMM      MMM OOOOOOOOOO
    @@@@@     @       @@@@@     @       @@@@@     @
     @@                @@                @@    
      @                 @                 @  
-"
+${NC}"
 if [ "x${SSH_TTY}" = "x" ]; then
-echo "Starting ZeMo Interface. Press Cntrl-C to exit."
-sleep 15
-echo "Zemo started"
+sleep 5
+#python #Add python script call
 fi
