@@ -19,7 +19,7 @@ echo " ZZZZZZZZZZZZZZ EEEEEEEEEEE MMM      MMM OOOOOOOOOO
     @@                @@                @@    
      @                 @                 @  
 "
-if [ "x${SSH_TTY}" != "x" ]; then
+if [ "x${SSH_TTY}" = "x" ]; then
 echo "Starting ZeMo Interface. Press Cntrl-C to exit."
 sleep 15
 echo "Zemo started"
