@@ -1,8 +1,9 @@
 #.profile file to autostart
+
 Cyan='\033[1;36m'
 NC='\033[0;0m'
 
-echo -e "${Cyan} 
+echo -e "${Cyan}
  ZZZZZZZZZZZZZZ EEEEEEEEEEE MMM      MMM OOOOOOOOOO
  ZZZZZZZZZZZZZ  EEEEEEEEEEE MMMM    MMMM OOOOOOOOOO
          ZZZZ               MMMMMMMMMMMM OO      OO
@@ -13,16 +14,17 @@ echo -e "${Cyan}
  ZZZZZZZZZZZZZ  EEEEEEEEEEE MMM      MMM OOOOOOOOOO
 
      @                 @                 @
-    @@                @@                @@  
+    @@                @@                @@
    @@@@@     @       @@@@@     @       @@@@@     @
   @@@@@@@@  @@      @@@@@@@@  @@      @@@@@@@@  @@
  @@@@@@@@@@@@@     @@@@@@@@@@@@@     @@@@@@@@@@@@@
   @@@@@@@@  @@      @@@@@@@@  @@      @@@@@@@@  @@
    @@@@@     @       @@@@@     @       @@@@@     @
-    @@                @@                @@    
-     @                 @                 @  
+    @@                @@                @@
+     @                 @                 @
 ${NC}"
+
 if [ "x${SSH_TTY}" = "x" ]; then
 sleep 5
-#python #Add python script call
+python3.4 #Add python script call
 fi
