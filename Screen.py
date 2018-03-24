@@ -13,7 +13,7 @@ class Screen(object):
     def __init__(self):
         pg.display.set_caption(CAPTION)
         pg.display.set_mode(SCREEN_SIZE)
-        #pg.display.toggle_fullscreen()
+        pg.display.toggle_fullscreen()
         self.viewScreen = pg.display.get_surface()
         self.background = pygame.Surface(self.viewScreen.get_size())
         # The program will exit once this is set to 'True'
