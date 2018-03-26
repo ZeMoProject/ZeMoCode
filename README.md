@@ -26,7 +26,7 @@ before device assembly. The device is then assembled and ZeMo setup on the devic
 
 1. Download and install PiBakery from http://www.pibakery.org/
 2. Open a new PiBakery window and create a custom script by connecting the following
-blocks:
+blocks (or you can import the ZeMoPiBakeryRecipe.xml file on Github):
 	- On first boot
 	- Set user password (insert your desired password)
 	- Set hostname (must be different from any others you have tied to your account)
@@ -35,7 +35,6 @@ blocks:
 	- Reboot
 	- On every boot (this starts a new chain of blocks)
 	- Enable VNC
-	* Alternatively, can use .xml file on Github
 3. Write to SD card
 4. Assemble ZeMo
 5. Plug into USB port and allow to startup.
@@ -48,7 +47,7 @@ network administrator.
 9. Run command: git clone https://github.com/ZeMoProject/ZeMoCode
 10. Run command: bash ~/ZeMoCode/SetupZemo.sh
 11. Respond to prompts:
-	- Enter ZeMo Account name. If you have not set one up, you may do so here:
+	- Enter ZeMo Account name. If you have not set one up, you may do so at zemoproject.org
 	- Select configuration:
 		1. **PiTFT 2.4", 2.8" or 3.2" resistive (240x320)**
 		2. PiTFT 2.2" no touch (240x320)
@@ -63,5 +62,5 @@ network administrator.
 	- Would you like the console to appear on the PiTFT display? [y/n] **y**
 	- REBOOT NOW? [y/N] **y**
 12. After restarting, reconnect by ssh (see step 7)
-13. Run command: sudo raspi-config 
+13. Run command: sudo raspi-config
 14. Change timezone, language, etc. for your location. See http://geek-university.com/raspberry-pi/internationalisation-options/ for more information.
