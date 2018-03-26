@@ -25,6 +25,6 @@ echo -e "${Cyan}
 ${NC}"
 
 if [ "x${SSH_TTY}" = "x" ]; then
-sleep 5
-python3.4 #Add python script call
+sleep 10
+python3 ~/ZeMoCode/TouchScreen.py # Starts ZeMo interface
 fi
