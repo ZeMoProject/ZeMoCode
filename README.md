@@ -43,11 +43,11 @@ blocks:
 7. Connect by typing ssh pi@rack1.local (substitute hostname you entered in step 2 for
 "rack1")
 8. Edit the wpa_supplicant to connect to the internet. This step depends on your
-particular network configuration. More information is available from here () or from your
+particular network configuration. More information is available from here (https://www.systutorials.com/docs/linux/man/5-wpa_supplicant.conf/) or from your
 network administrator.
-8. Run command: git clone https://github.com/ZeMoProject/ZeMoCode
-9. Run command: bash ~/ZeMoCode/SetupZemo.sh
-10. Respond to prompts:
+9. Run command: git clone https://github.com/ZeMoProject/ZeMoCode
+10. Run command: bash ~/ZeMoCode/SetupZemo.sh
+11. Respond to prompts:
 	- Enter ZeMo Account name. If you have not set one up, you may do so here:
 	- Select configuration:
 		1. **PiTFT 2.4", 2.8" or 3.2" resistive (240x320)**
@@ -62,3 +62,6 @@ network administrator.
 		4. 0 degrees (portait)
 	- Would you like the console to appear on the PiTFT display? [y/n] **y**
 	- REBOOT NOW? [y/N] **y**
+12. After restarting, reconnect by ssh (see step 7)
+13. Run command: sudo raspi-config 
+14. Change timezone, language, etc. for your location. See http://geek-university.com/raspberry-pi/internationalisation-options/ for more information.
