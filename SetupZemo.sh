@@ -16,6 +16,10 @@ cat $account > ~/ACCOUNT
 #Move .profile to enable autostart
 cp ~/ZeMoCode/profile ~/.profile
 
+#Install modules
+sudo apt-get install pip3
+pip3 install yaml
+
 #Install monitor drivers
 wget https://raw.githubusercontent.com/adafruit/Adafruit-PiTFT-Helper/master/adafruit-pitft-helper2.sh
 chmod +x adafruit-pitft-helper2.sh
