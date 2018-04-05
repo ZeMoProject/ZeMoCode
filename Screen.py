@@ -13,14 +13,14 @@ class Screen(object):
     def __init__(self):
         pg.display.set_caption(CAPTION)
         pg.display.set_mode(SCREEN_SIZE)
-        pg.display.toggle_fullscreen()
-        self.viewScreen = pg.display.get_surface()
-        self.background = pygame.Surface(self.viewScreen.get_size())
-        # The program will exit once this is set to 'True'
+        #TESTING
+        #pg.display.toggle_fullscreen()
+        self.canvas = pg.display.get_surface()
+        self.background = pygame.Surface(self.canvas.get_size())
         self.keys = pg.key.get_pressed()
-        self.color = pg.Color("black")
         # Hides Mouse, still allows click events
         pg.mouse.set_cursor((8,8),(0,0),(0,0,0,0,0,0,0,0),(0,0,0,0,0,0,0,0))
+
         self.topLeft = pg.Rect(5,45,152.5,92.5)
         self.btmLeftSmall = pg.Rect(5,142.5,100,92.5)
         self.middleBtnSmall = pg.Rect(110,142.5,100,92.5)
@@ -52,55 +52,59 @@ class Screen(object):
         self.deleteBtn = pg.Rect(257,5,58,35)
 
     # Settings screen
-    def settings_event_screen(self):
-            self.viewScreen.fill((0,0,0))
+    def settings_event_screen(self, eth0, wlan0, readsPerDay, daysToKeep):
+            self.canvas.fill((0,0,0))
+            color = pg.Color("yellow")
+
+            myfont = pg.font.SysFont("monospace", 18)            
+            self.drawText(str(wlan0), myfont, color, self.topLeft, 0, 30)
+            self.drawText(str(eth0), myfont, color, self.topLeft, 0, 0)
 
             myfont = pg.font.SysFont("monospace", 20)
-            color = pg.Color("yellow")
             self.drawText("ip Address:", myfont, color, self.topLeft, 0, -30)
             self.drawText("Refresh", myfont, color, self.topRight, 0, -10)
-            self.drawText("Sensors", myfont, color, self.topRight, 0, +10)
+            self.drawText("Sensors", myfont, color, self.topRight, 0, 10)
             self.drawText("Days Kept:", myfont, color, self.btmLeft, 0, -10)
             self.drawText("Reads/Day:", myfont, color, self.btmRight, 0, -10)
-            
-            #ipEth0 = myfont.render(str(self.eth0), 1, color)
-            #ipwlan0 = myfont.render(str(self.wlan0), 1, color)
-            pg.gfxdraw.rectangle(self.viewScreen, self.settingsBtn, color)
-            pg.draw.circle(self.viewScreen, color, (297,22), 17, 10)
-            myfont.set_underline(True)
-            self.drawTitle("Settings", myfont, color)            
-            myfont.set_underline(False)            
-            try:
-                daysKept = myfont.render(str(self.daysToKeep), 1, color)
-            except Exception as e:
-                self.drawText("Unknown", myfont, color, self.btmLeft, 0, +10)
-            try:
-                readsPerDay = myfont.render(str(self.readsPerDay), 1, color)
-            except Exception as e:
-                readsPerDay = myfont.render("Unknown", 1, color)
-            tLeft = pg.gfxdraw.rectangle(self.viewScreen, self.topLeft, color)
-            bLeft = pg.gfxdraw.rectangle(self.viewScreen, self.btmLeft, color)
-            tRight = pg.gfxdraw.rectangle(self.viewScreen, self.topRight, color)
-            bRight = pg.gfxdraw.rectangle(self.viewScreen, self.btmRight, color)
-            pg.gfxdraw.rectangle(self.viewScreen, self.backBtn, color)
-            pg.draw.polygon(self.viewScreen, color, ((30,17),(30,25),(30,17),(10,17),(15,23),(10,17),(15,11),(10,17)), 1)
+            self.drawText(str(readsPerDay), myfont, color, self.btmRight, 0, 10)
+            self.drawText(str(daysToKeep), myfont, color, self.btmLeft, 0, 10)           
 
-            """textpos = ipEth0.get_rect()
-            textpos.centerx = self.topLeft.centerx 
-            textpos.centery = self.topLeft.centery
-            self.viewScreen.blit(ipEth0, textpos)
-            textpos = ipwlan0.get_rect()
-            textpos.centerx = self.topLeft.centerx 
-            textpos.centery = self.topLeft.centery + 30
-            self.viewScreen.blit(ipwlan0, textpos)
-            textpos = readsPerDay.get_rect()
-            textpos.centerx = self.btmRight.centerx
-            textpos.centery = self.btmRight.centery + 10
-            self.viewScreen.blit(readsPerDay, textpos)"""
+            pg.gfxdraw.rectangle(self.canvas, self.settingsBtn, color)
+            pg.draw.circle(self.canvas, color, (297,22), 17, 10)
+            self.drawTitle("Settings", myfont, color)            
+
+            tLeft = pg.gfxdraw.rectangle(self.canvas, self.topLeft, color)
+            bLeft = pg.gfxdraw.rectangle(self.canvas, self.btmLeft, color)
+            tRight = pg.gfxdraw.rectangle(self.canvas, self.topRight, color)
+            bRight = pg.gfxdraw.rectangle(self.canvas, self.btmRight, color)
+            pg.gfxdraw.rectangle(self.canvas, self.backBtn, color)
+            pg.draw.polygon(self.canvas, color, ((30,17),(30,25),(30,17),(10,17),(15,23),(10,17),(15,11),(10,17)), 1)
+            pg.display.update()
+
+    # Screen shows "Taking Reads..."
+    def taking_reads_loop(self):
+        color = pg.Color("steelblue1")
+        myfont = pg.font.SysFont("monospace", 15)
+        #add while loop starting here, for when threading occurs
+        self.drawText("Taking Reads   ", myfont, color, self.background.get_rect(), 0, 0)                   
+        self.drawText("Taking Reads   ", myfont, color, self.background.get_rect(), 0, 0)                   
+        self.drawText("Taking Reads   ", myfont, color, self.background.get_rect(), 0, 0)                   
+        pg.display.update()
+        time.sleep(2)
+        self.drawText("Taking Reads.  ", myfont, color, self.background.get_rect(), 0, 0)                   
+        pg.display.update()
+        time.sleep(2)                  
+        self.drawText("Taking Reads.. ", myfont, color, self.background.get_rect(), 0, 0)                   
+        pg.display.update()
+        time.sleep(2)
+        self.drawText("Taking Reads...", myfont, color, self.background.get_rect(), 0, 0)                   
+        pg.display.update()
+        time.sleep(2)
+        self.canvas.fill((0,0,0))
 
     # Advanced Settings screen
     def advanced_settings_event_screen(self):
-            self.viewScreen.fill((0,0,0))
+            self.canvas.fill((0,0,0))
 
             myfont = pg.font.SysFont("monospace", 20)
             color = pg.Color("plum1")
@@ -108,21 +112,45 @@ class Screen(object):
             self.drawText("Email Data", myfont, color, self.middleBtn, 0, 0)
             self.drawText("Re-Register", myfont, color, self.btmLeft, 0, 0)
 
-            pg.gfxdraw.rectangle(self.viewScreen, self.btmLeft, color)
-            pg.gfxdraw.rectangle(self.viewScreen, self.btmRight, color)
-            pg.gfxdraw.rectangle(self.viewScreen, self.middleBtn, color)
+            pg.gfxdraw.rectangle(self.canvas, self.btmLeft, color)
+            pg.gfxdraw.rectangle(self.canvas, self.btmRight, color)
+            pg.gfxdraw.rectangle(self.canvas, self.middleBtn, color)
 
-            myfont.set_underline(True)
             self.drawTitle("Advanced Settings", myfont, color)            
-            myfont.set_underline(False)
 
-            pg.gfxdraw.rectangle(self.viewScreen, self.backBtn, color)
-            pg.draw.polygon(self.viewScreen, color, ((30,17),(30,25),(30,17),(10,17),(15,23),(10,17),(15,11),(10,17)), 1)       
+            pg.gfxdraw.rectangle(self.canvas, self.backBtn, color)
+            pg.draw.polygon(self.canvas, color, ((30,17),(30,25),(30,17),(10,17),(15,23),(10,17),(15,11),(10,17)), 1)       
+            pg.display.update()
+
+    # Update range values screen
+    def update_event_screen(self, sensor):
+            self.canvas.fill((0,0,0))
+            myfont = pg.font.SysFont("monospace", 20)
+            color = pg.Color("orange")
+            self.drawTitle(str(sensor.getName()) + " Range", myfont, color)                        
+            pg.draw.polygon(self.canvas, color, ((30,17),(30,25),(30,17),(10,17),(15,23),(10,17),(15,11),(10,17)), 1)
+
+            #TODO move getLowRange and High range into sensor class
+            self.drawText(str(sensor.getCurrRead()), myfont, color, self.middleBtnSmall, 0, 0)
+            self.drawText("Low", myfont, color, self.btmLeftSmall, 0, -10)
+            self.drawText("High", myfont, color, self.btmRightSmall, 0, -10)
+            self.drawText(str(sensor.getLowRange()), myfont, color, self.btmLeftSmall, 0, +10)
+            self.drawText(str(sensor.getHighRange()), myfont, color, self.btmRightSmall, 0, +10)
+            self.drawText("Calibrate", myfont, color, self.topLeft, 0, 0)
+            self.drawText("Refresh", myfont, color, self.topRight, 0, 0)
+
+            pg.gfxdraw.rectangle(self.canvas, self.backBtn, color)
+            pg.gfxdraw.rectangle(self.canvas, self.topLeft, color)
+            pg.gfxdraw.rectangle(self.canvas, self.btmLeftSmall, color)
+            pg.gfxdraw.rectangle(self.canvas, self.btmRightSmall, color)
+            pg.gfxdraw.rectangle(self.canvas, self.middleBtnSmall, color)
+            pg.gfxdraw.rectangle(self.canvas, self.topRight, color)
+
+            pg.display.update()     
 
     # Numpad screen
-    def numpad_event_screen(self, lowUp, ulrange, cal):
-            self.viewScreen.fill((0,0,0))
-            self.calNum = -1111
+    def numpad_event_screen(self):
+            self.canvas.fill((0,0,0))
             myfont = pg.font.SysFont("monospace", 60)
             color = pg.Color("yellow")
             self.drawText("1", myfont, color, self.one, 0, 0)
@@ -138,72 +166,93 @@ class Screen(object):
             self.drawText(".", myfont, color, self.period, 0, -10)
 
             myfont = pg.font.SysFont("monospace", 20)
-            myfont.set_underline(True)
-
-            if cal is 0:
-                title = myfont.render("Enter New Range", 1, color)
-                newRangeText = myfont.render("New " + lowUp + " Range:", 1, color)
-                pg.gfxdraw.rectangle(self.viewScreen, self.backBtn, color)
-                pg.draw.polygon(self.viewScreen, color, ((30,17),(30,25),(30,17),(10,17),(15,23),(10,17),(15,11),(10,17)), 1)
-            elif cal is 1:
-                title = myfont.render("Enter Calibration", 1, color)
-                newRangeText = myfont.render(lowUp + ":", 1, color)
-            elif cal is 2:
-                title = myfont.render("Enter Code", 1, color)
-                newRangeText = myfont.render(lowUp + ":", 1, color)
-                pg.gfxdraw.rectangle(self.viewScreen, self.backBtn, color)
-                pg.draw.polygon(self.viewScreen, color, ((30,17),(30,25),(30,17),(10,17),(15,23),(10,17),(15,11),(10,17)), 1)
-            elif cal is 3:
-                title = myfont.render("Enter Reads/Day", 1, color)
-                newRangeText = myfont.render("Reads/Day:", 1, color)
-                pg.gfxdraw.rectangle(self.viewScreen, self.backBtn, color)
-                pg.draw.polygon(self.viewScreen, color, ((30,17),(30,25),(30,17),(10,17),(15,23),(10,17),(15,11),(10,17)), 1)
-            elif cal is 4:
-                title = myfont.render("Enter Days Kept", 1, color)
-                newRangeText = myfont.render("Days Kept:", 1, color)
-                pg.gfxdraw.rectangle(self.viewScreen, self.backBtn, color)
-                pg.draw.polygon(self.viewScreen, color, ((30,17),(30,25),(30,17),(10,17),(15,23),(10,17),(15,11),(10,17)), 1)
-
+            title = myfont.render("Enter Calibration", 1, color)
+            newRangeText = myfont.render("Cal. Value:", 1, color)
+ 
             myfont = pg.font.SysFont("monospace", 15)
             self.drawText("Submit", myfont, color, self.submitBtn, 0, 0)
-            pg.draw.polygon(self.viewScreen, color, ((305,21),(265,21),(275,27),(265,21),(275,14),(265,21)), 2)
+            pg.draw.polygon(self.canvas, color, ((305,21),(265,21),(275,27),(265,21),(275,14),(265,21)), 2)
 
-            pg.gfxdraw.rectangle(self.viewScreen, self.one, color)
-            pg.gfxdraw.rectangle(self.viewScreen, self.two, color)
-            pg.gfxdraw.rectangle(self.viewScreen, self.three, color)
-            pg.gfxdraw.rectangle(self.viewScreen, self.four, color)
-            pg.gfxdraw.rectangle(self.viewScreen, self.five, color)
-            pg.gfxdraw.rectangle(self.viewScreen, self.six, color)
-            pg.gfxdraw.rectangle(self.viewScreen, self.seven, color)
-            pg.gfxdraw.rectangle(self.viewScreen, self.eight, color)
-            pg.gfxdraw.rectangle(self.viewScreen, self.nine, color)
-            pg.gfxdraw.rectangle(self.viewScreen, self.period, color)
-            pg.gfxdraw.rectangle(self.viewScreen, self.zero, color)
-            pg.gfxdraw.rectangle(self.viewScreen, self.submitBtn, color)
-            pg.gfxdraw.rectangle(self.viewScreen, self.deleteBtn, color)
+            pg.gfxdraw.rectangle(self.canvas, self.one, color)
+            pg.gfxdraw.rectangle(self.canvas, self.two, color)
+            pg.gfxdraw.rectangle(self.canvas, self.three, color)
+            pg.gfxdraw.rectangle(self.canvas, self.four, color)
+            pg.gfxdraw.rectangle(self.canvas, self.five, color)
+            pg.gfxdraw.rectangle(self.canvas, self.six, color)
+            pg.gfxdraw.rectangle(self.canvas, self.seven, color)
+            pg.gfxdraw.rectangle(self.canvas, self.eight, color)
+            pg.gfxdraw.rectangle(self.canvas, self.nine, color)
+            pg.gfxdraw.rectangle(self.canvas, self.period, color)
+            pg.gfxdraw.rectangle(self.canvas, self.zero, color)
+            pg.gfxdraw.rectangle(self.canvas, self.submitBtn, color)
+            pg.gfxdraw.rectangle(self.canvas, self.deleteBtn, color)
 
-            self.viewScreen.blit(submit, textpos)
-            self.viewScreen.blit(newRangeText, (5,195))
-            self.viewScreen.blit(title, (50,10))
+            self.canvas.blit(newRangeText, (5,195))
+            self.canvas.blit(title, (50,10))
+            pg.display.update()
 
-    def main_menu_screen(self):
-            self.viewScreen.fill((0,0,0))
+    def main_menu_screen(self, condRead, dORead, phRead, tempRead):
+            self.canvas.fill((0,0,0))
             myfont = pg.font.SysFont("monospace", 20)
             color = pg.Color("green")
-            myfont.set_underline(True)
             self.drawTitle("Current Reads", myfont, color)
-            myfont.set_underline(False)
             self.drawText("pH:", myfont, color, self.btmLeft, 0, -10)
             self.drawText("Cond:", myfont, color, self.topLeft, 0, -10)
             self.drawText("DO:", myfont, color, self.topRight, 0, -10)
             self.drawText("Temp:", myfont, color, self.btmRight, 0, -10)
+            self.drawText(str(condRead), myfont, color, self.topLeft, 0, 10)
+            self.drawText(str(phRead), myfont, color, self.btmLeft, 0, 10)
+            self.drawText(str(dORead), myfont, color, self.topRight, 0, 10)
+            self.drawText(str(tempRead), myfont, color, self.btmRight, 0, 10)            
                        
-            pg.gfxdraw.rectangle(self.viewScreen, self.topLeft, color)
-            pg.gfxdraw.rectangle(self.viewScreen, self.btmLeft, color)
-            pg.gfxdraw.rectangle(self.viewScreen, self.topRight, color)
-            pg.gfxdraw.rectangle(self.viewScreen, self.btmRight, color)
-            pg.gfxdraw.rectangle(self.viewScreen, self.settingsBtn, color)
-            pg.draw.circle(self.viewScreen, color, (297,22), 17, 10)
+            pg.gfxdraw.rectangle(self.canvas, self.topLeft, color)
+            pg.gfxdraw.rectangle(self.canvas, self.btmLeft, color)
+            pg.gfxdraw.rectangle(self.canvas, self.topRight, color)
+            pg.gfxdraw.rectangle(self.canvas, self.btmRight, color)
+            pg.gfxdraw.rectangle(self.canvas, self.settingsBtn, color)
+            pg.draw.circle(self.canvas, color, (297,22), 17, 10)
+            pg.display.update()
+
+    def register_screen(self):
+        self.canvas.fill((0,0,0))        
+        color = pg.Color("steelblue1")
+        myfont = pg.font.SysFont("monospace", 15)
+        self.drawTitle("Register Your Pi", myfont, color)
+        self.drawText("You must click \"Accept\" on the", myfont, color, self.centerBtn, 0, -95) 
+        self.drawText("\"Manage Your Connections\" screen", myfont, color, self.centerBtn, 0, -80)
+        self.drawText("before clicking on \"Register\"", myfont, color, self.centerBtn, 0, -65)         
+        self.drawText("Register", myfont, color, self.centerBtn, 0, 0)
+        pg.gfxdraw.rectangle(self.canvas, self.centerBtn, color)   
+        pg.display.update()
+        while(1):
+            pg.event.clear()
+            pg.event.wait()
+            for event in pg.event.get():
+                if event.type == pg.MOUSEBUTTONDOWN: 
+                    if self.centerBtn.collidepoint(event.pos):
+                        return
+    
+    def reregister(self):
+        self.canvas.fill((0,0,0))        
+        color = pg.Color("steelblue1")
+        myfont = pg.font.SysFont("monospace", 15)
+        self.drawTitle("Re-Register Your Pi", myfont, color)
+        self.drawText("Are you sure?", myfont, color, self.centerBtn, 0, -95)         
+        myfont = pg.font.SysFont("monospace", 24)        
+        self.drawText("Yes", myfont, color, self.midLeft, 0, 0)
+        self.drawText("No", myfont, color, self.midRight, 0, 0)        
+        pg.gfxdraw.rectangle(self.canvas, self.midRight, color) 
+        pg.gfxdraw.rectangle(self.canvas, self.midLeft, color)             
+        pg.display.update()
+        while(1):
+            pg.event.clear()
+            pg.event.wait()
+            for event in pg.event.get():
+                if event.type == pg.MOUSEBUTTONDOWN: 
+                    if self.midLeft.collidepoint(event.pos):
+                        return True
+                    elif self.midRight.collidepoint(event.pos):
+                        return False
 
     # Draws normal text
     def drawText(self, text, myfont, color, location, xOffset, yOffset):
@@ -211,16 +260,29 @@ class Screen(object):
         textpos = textPrint.get_rect()
         textpos.centerx = location.centerx + xOffset
         textpos.centery = location.centery + yOffset
-        self.viewScreen.blit(textPrint, textpos)
+        self.canvas.blit(textPrint, textpos)
 
     # Draws the titles
     def drawTitle(self, titleScreen, myfont, color):
+        myfont.set_underline(True)
         textPrint = myfont.render(titleScreen, 1, color)                
         textpos = textPrint.get_rect()
         textpos.centerx = self.background.get_rect().centerx
         textpos.centery = self.background.get_rect().top + 20
-        self.viewScreen.blit(textPrint, textpos)        
+        self.canvas.blit(textPrint, textpos)
+        myfont.set_underline(False)       
 
+    def drawMessage(self, text):
+        self.canvas.fill((0,0,0))        
+        color = pg.Color("steelblue1")
+        myfont = pg.font.SysFont("monospace", 20)         
+        textPrint = myfont.render(text, 1, color)        
+        textpos = textPrint.get_rect()
+        textpos.centerx = self.background.get_rect().centerx
+        textpos.centery = self.background.get_rect().centery
+        self.canvas.blit(textPrint, textpos)
+        pg.display.update()                
+    
     # For all screens except numpad
     def checkCollision(self, eventPos):
         if self.topLeft.collidepoint(eventPos):
@@ -233,27 +295,53 @@ class Screen(object):
             return 4
         elif self.backBtn.collidepoint(eventPos):
             return 5
-        elif self.middleBtn.collidepoint(eventPos):
-            return 6
         elif self.settingsBtn.collidepoint(eventPos):
             return 7
-        elif self.centerBtn.collidepoint(eventPos):
-            return 8
-        elif self.midLeft.collidepoint(eventPos):
-            return 9
-        elif self.midRight.collidepoint(eventPos):
-            return 10
-        elif self.btmLeftSmall.collidepoint(eventPos):
-            return 11
-        elif self.middleBtnSmall.collidepoint(eventPos):
-            return 12
-        elif self.btmRightSmall.collidepoint(eventPos):
-            return 13  
         else:
             return 0
+    
+    def checkCollisionSmallBtns(self, eventPos):
+        if self.btmLeftSmall.collidepoint(eventPos):
+            return 1
+        elif self.middleBtnSmall.collidepoint(eventPos):
+            return 2
+        elif self.btmRightSmall.collidepoint(eventPos):
+            return 3
+        elif self.middleBtn.collidepoint(eventPos):
+            return 4            
+        else:
+            return 0        
 
     def checkNumpad(self, eventPos):
-        return "not implemented"
+        if self.one.collidepoint(eventPos):
+            return "1"
+        elif self.two.collidepoint(eventPos):
+            return "2"
+        elif self.three.collidepoint(eventPos):
+            return "3"
+        elif self.four.collidepoint(eventPos):
+            return "4"
+        elif self.five.collidepoint(eventPos):
+            return "5"
+        elif self.six.collidepoint(eventPos):
+            return "6"
+        elif self.seven.collidepoint(eventPos):
+            return "7"
+        elif self.eight.collidepoint(eventPos):
+            return "8"
+        elif self.nine.collidepoint(eventPos):
+            return "9"
+        elif self.zero.collidepoint(eventPos):
+            return "0"
+        elif self.period.collidepoint(eventPos):
+            return "."
+        elif self.deleteBtn.collidepoint(eventPos):
+            return "d"
+        elif self.backBtn.collidepoint(eventPos):
+            return "b"
+        elif self.submitBtn.collidepoint(eventPos):
+            return "s"
+        return "none"
 
     def quit(self):
         pg.quit()
