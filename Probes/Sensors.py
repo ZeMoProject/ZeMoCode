@@ -5,7 +5,6 @@ import serial # Required for communication with boards
 import socket, struct, fcntl
 import time
 
-import yaml
 import os, sys, re
 import requests
 
@@ -36,6 +35,8 @@ class Sensors(object):
             self.lowRange = jsonFile["settings"][self.tag][0]
             self.highRange = jsonFile["settings"][self.tag][1]
             self.data = []
+            self.daysToKeep = jsonFile["settings"]["days"]
+            self.readsPerDay = jsonFile["settings"]["reads"]            
         except:
             self.currRead = "-1"
             self.lowRange = "-1"
@@ -109,13 +110,13 @@ class Sensors(object):
 	# Take reads and write to file
     def takeRead(self, conn):
         if(self.i2cAddress != -1):
-            #TESTING
-            maxTries = 4
-            #maxTries = 10
-            reads = []
-            reads2 = []	 
-            avgRead = 0
-            try:
+                #TESTING
+                maxTries = 4
+                #maxTries = 10
+                reads = []
+                reads2 = []	 
+                avgRead = 0
+                #try:
                 for i in range(0, maxTries):
                     t = int(time.time())
                     try:
@@ -164,7 +165,6 @@ class Sensors(object):
                 outFileLog.write(str(t * 1000) + "," + str(self.lowRange) + ";" + str(round(avgRead, 1)) + ";" + str(self.highRange))
                 outFileLog.write("\n")
                 outFileLog.close()
-                
                 s = ""
                 with open(self.filename) as f:
                     s = f.read() + '\n'
@@ -174,23 +174,23 @@ class Sensors(object):
                     }
                 }
                 conn.sendReadings(values)
-                return_data = "\t".join(str(reads))
+                return_data = "\t".join(str(reads2))
                 self.limitLines()
-                self.data = reads
-            except Exception as e:
-                t = int(time.time())
-                errorstring = time.ctime(t) + ": Error: %s" % str(e)
+                self.data = return_data
+                #except Exception as e:
+                #t = int(time.time())
+                #errorstring = time.ctime(t) + ": Error: %s" % str(e)
                 #print(errorstring)        
-            return(reads)
+                return reads
 
     def calibrateSensor(self, query):
         maxTries = 3
         for i in range (0, maxTries):
             self.i2sensor.set_i2c_address(self.i2cAddress)
             data = self.i2sensor.query(query)
-            if data == "Success":
+            if data is "Success":
                 return data
-            if (maxTries - 1) == i:
+            if (maxTries - 1) is i:
                 return data
 
     # Limits file size to 1 MB
@@ -202,7 +202,7 @@ class Sensors(object):
     def limitLines(self):
         f = open(self.filename)
         test = f.readlines()
-        if self.readsPerDay > 0 and self.daysToKeep > 0:
+        if int(self.readsPerDay) > 0 and int(self.daysToKeep) > 0:
             daysKept = int(self.daysToKeep)
             # if limiting to 6 months regardless of amount reads per day, add next two lines:
             #if daysKept > 183:
@@ -220,23 +220,22 @@ class Sensors(object):
         f.close()        
 
     # Attempts to do a command 3 times before failing
-    """def tryThree(self, command, sensor):
-        color = pg.Color("yellow")
+    def tryThree(self, command):
+        """color = pg.Color("yellow")
         myfont = pg.font.SysFont("monospace", 18)
         failRetry = myfont.render("Calibration Step Failed", 1, color)
         failRetrypos = failRetry.get_rect()
         failRetrypos.centerx = self.background.get_rect().centerx
-        failRetrypos.centery = self.background.get_rect().centery
+        failRetrypos.centery = self.background.get_rect().centery"""
         maxTries = 3
         for i in range(0, maxTries):
-            if sensor.calibrateSensor(command) == "Success":
+            if self.calibrateSensor(command) is "Success":
                 return True
-        self.canvas.fill((0,0,0))
+        """self.canvas.fill((0,0,0))
         self.canvas.blit(failRetry, failRetrypos)
         pg.display.update()
         time.sleep(2)
         self.canvas.fill((0,0,0))
         pg.display.update()
-        pg.event.clear()        
+        pg.event.clear()"""        
         return False
-    """

@@ -1,7 +1,8 @@
 from Probes.Sensors import Sensors
 
 class Conductivity(Sensors):
-    def __init__(self, jsonFile, piName):
+    def __init__(self, jsonFile, piName, screen):
+        self.screen = screen
         self.setValues()
         self.setProbeType(100, "K," + str(jsonFile["settings"]["cdProbeType"]))
         super().__init__(jsonFile, piName)       

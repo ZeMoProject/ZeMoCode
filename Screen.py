@@ -23,10 +23,11 @@ class Screen(object):
 
         self.topLeft = pg.Rect(5,45,152.5,92.5)
         self.btmLeftSmall = pg.Rect(5,142.5,100,92.5)
-        self.middleBtnSmall = pg.Rect(110,142.5,100,92.5)
+        self.btmMidSmall = pg.Rect(110,142.5,100,92.5)
         self.btmRightSmall = pg.Rect(215,142.5,100,92.5)
         self.btmLeft = pg.Rect(5,142.5,152.5,92.5)
         self.topRight = pg.Rect(162.5,45,152.5,92.5)
+        self.btmBar = pg.Rect(5, 142.5, 310, 92.5)
 
         self.midLeft = pg.Rect(5,92.5,152.5,92.5)
         self.midRight = pg.Rect(162.5,92.5,152.5,92.5)
@@ -69,8 +70,7 @@ class Screen(object):
             self.drawText(str(readsPerDay), myfont, color, self.btmRight, 0, 10)
             self.drawText(str(daysToKeep), myfont, color, self.btmLeft, 0, 10)           
 
-            pg.gfxdraw.rectangle(self.canvas, self.settingsBtn, color)
-            pg.draw.circle(self.canvas, color, (297,22), 17, 10)
+            self.drawImage("settings_icon.png", self.settingsBtn, 35, 35)
             self.drawTitle("Settings", myfont, color)            
 
             tLeft = pg.gfxdraw.rectangle(self.canvas, self.topLeft, color)
@@ -104,46 +104,45 @@ class Screen(object):
 
     # Advanced Settings screen
     def advanced_settings_event_screen(self):
-            self.canvas.fill((0,0,0))
+        self.canvas.fill((0,0,0))
 
-            myfont = pg.font.SysFont("monospace", 20)
-            color = pg.Color("plum1")
-            self.drawText("EXIT", myfont, color, self.btmRight, 0, 0)
-            self.drawText("Email Data", myfont, color, self.middleBtn, 0, 0)
-            self.drawText("Re-Register", myfont, color, self.btmLeft, 0, 0)
+        myfont = pg.font.SysFont("monospace", 20)
+        color = pg.Color("plum1")
+        self.drawText("EXIT", myfont, color, self.btmRight, 0, 0)
+        self.drawText("Email Data", myfont, color, self.middleBtn, 0, 0)
+        self.drawText("Re-Register", myfont, color, self.btmLeft, 0, 0)
 
-            pg.gfxdraw.rectangle(self.canvas, self.btmLeft, color)
-            pg.gfxdraw.rectangle(self.canvas, self.btmRight, color)
-            pg.gfxdraw.rectangle(self.canvas, self.middleBtn, color)
+        pg.gfxdraw.rectangle(self.canvas, self.btmLeft, color)
+        pg.gfxdraw.rectangle(self.canvas, self.btmRight, color)
+        pg.gfxdraw.rectangle(self.canvas, self.middleBtn, color)
 
-            self.drawTitle("Advanced Settings", myfont, color)            
+        self.drawTitle("Advanced Settings", myfont, color)            
 
-            pg.gfxdraw.rectangle(self.canvas, self.backBtn, color)
-            pg.draw.polygon(self.canvas, color, ((30,17),(30,25),(30,17),(10,17),(15,23),(10,17),(15,11),(10,17)), 1)       
-            pg.display.update()
+        pg.gfxdraw.rectangle(self.canvas, self.backBtn, color)
+        pg.draw.polygon(self.canvas, color, ((30,17),(30,25),(30,17),(10,17),(15,23),(10,17),(15,11),(10,17)), 1)       
+        pg.display.update()
 
     # Update range values screen
     def update_event_screen(self, sensor):
             self.canvas.fill((0,0,0))
             myfont = pg.font.SysFont("monospace", 20)
             color = pg.Color("orange")
-            self.drawTitle(str(sensor.getName()) + " Range", myfont, color)                        
+            self.drawTitle(str(sensor.getName()), myfont, color)                        
             pg.draw.polygon(self.canvas, color, ((30,17),(30,25),(30,17),(10,17),(15,23),(10,17),(15,11),(10,17)), 1)
 
-            #TODO move getLowRange and High range into sensor class
-            self.drawText(str(sensor.getCurrRead()), myfont, color, self.middleBtnSmall, 0, 0)
-            self.drawText("Low", myfont, color, self.btmLeftSmall, 0, -10)
-            self.drawText("High", myfont, color, self.btmRightSmall, 0, -10)
-            self.drawText(str(sensor.getLowRange()), myfont, color, self.btmLeftSmall, 0, +10)
-            self.drawText(str(sensor.getHighRange()), myfont, color, self.btmRightSmall, 0, +10)
+            self.drawText(str(sensor.getCurrRead()), myfont, color, self.btmMidSmall, 0, 25)
+            self.drawText("Low", myfont, color, self.btmLeftSmall, 0, 5)
+            self.drawText("High", myfont, color, self.btmRightSmall, 0, 5)
+            self.drawText("Take Read", myfont, color, self.btmMidSmall, 0, -25)
+            self.drawText("Current", myfont, color, self.btmMidSmall, 0, 5)
+            self.drawText(str(sensor.getLowRange()), myfont, color, self.btmLeftSmall, 0, 25)
+            self.drawText(str(sensor.getHighRange()), myfont, color, self.btmRightSmall, 0, 25)
             self.drawText("Calibrate", myfont, color, self.topLeft, 0, 0)
             self.drawText("Refresh", myfont, color, self.topRight, 0, 0)
 
             pg.gfxdraw.rectangle(self.canvas, self.backBtn, color)
             pg.gfxdraw.rectangle(self.canvas, self.topLeft, color)
-            pg.gfxdraw.rectangle(self.canvas, self.btmLeftSmall, color)
-            pg.gfxdraw.rectangle(self.canvas, self.btmRightSmall, color)
-            pg.gfxdraw.rectangle(self.canvas, self.middleBtnSmall, color)
+            pg.gfxdraw.rectangle(self.canvas, self.btmBar, color)
             pg.gfxdraw.rectangle(self.canvas, self.topRight, color)
 
             pg.display.update()     
@@ -209,8 +208,7 @@ class Screen(object):
             pg.gfxdraw.rectangle(self.canvas, self.btmLeft, color)
             pg.gfxdraw.rectangle(self.canvas, self.topRight, color)
             pg.gfxdraw.rectangle(self.canvas, self.btmRight, color)
-            pg.gfxdraw.rectangle(self.canvas, self.settingsBtn, color)
-            pg.draw.circle(self.canvas, color, (297,22), 17, 10)
+            self.drawImage("settings_icon.png", self.settingsBtn, 35, 35)
             pg.display.update()
 
     def register_screen(self):
@@ -228,7 +226,7 @@ class Screen(object):
             pg.event.clear()
             pg.event.wait()
             for event in pg.event.get():
-                if event.type == pg.MOUSEBUTTONDOWN: 
+                if event.type is pg.MOUSEBUTTONDOWN: 
                     if self.centerBtn.collidepoint(event.pos):
                         return
     
@@ -248,11 +246,21 @@ class Screen(object):
             pg.event.clear()
             pg.event.wait()
             for event in pg.event.get():
-                if event.type == pg.MOUSEBUTTONDOWN: 
+                if event.type is pg.MOUSEBUTTONDOWN: 
                     if self.midLeft.collidepoint(event.pos):
                         return True
                     elif self.midRight.collidepoint(event.pos):
                         return False
+
+    def drawImage(self, imageName, location, width, height):
+        image = pg.image.load("/home/pi/ZeMoCode/images/" + str(imageName))
+        imageTransform = pg.transform.scale(image, (width, height))
+
+        imageRect = imageTransform.get_rect()
+        imageRect.centerx = location.centerx
+        imageRect.centery = location.centery        
+        self.canvas.blit(imageTransform, imageRect)
+        pg.display.update()
 
     # Draws normal text
     def drawText(self, text, myfont, color, location, xOffset, yOffset):
@@ -263,9 +271,9 @@ class Screen(object):
         self.canvas.blit(textPrint, textpos)
 
     # Draws the titles
-    def drawTitle(self, titleScreen, myfont, color):
+    def drawTitle(self, title, myfont, color):
         myfont.set_underline(True)
-        textPrint = myfont.render(titleScreen, 1, color)                
+        textPrint = myfont.render(title, 1, color)                
         textpos = textPrint.get_rect()
         textpos.centerx = self.background.get_rect().centerx
         textpos.centery = self.background.get_rect().top + 20
@@ -297,13 +305,15 @@ class Screen(object):
             return 5
         elif self.settingsBtn.collidepoint(eventPos):
             return 7
+        elif self.btmBar.collidepoint(eventPos):
+            return 8
         else:
             return 0
     
     def checkCollisionSmallBtns(self, eventPos):
         if self.btmLeftSmall.collidepoint(eventPos):
             return 1
-        elif self.middleBtnSmall.collidepoint(eventPos):
+        elif self.btmMidSmall.collidepoint(eventPos):
             return 2
         elif self.btmRightSmall.collidepoint(eventPos):
             return 3
@@ -342,6 +352,41 @@ class Screen(object):
         elif self.submitBtn.collidepoint(eventPos):
             return "s"
         return "none"
+
+    # Numpad
+    def numpad_event(self):
+        newValue = ""
+        self.numpad_event_screen()
+        color = pg.Color("yellow")
+        while(1):
+            if(1): #self.readingNow is False):
+                try:
+                    pg.display.update() 
+                    myfont = pg.font.SysFont("monospace", 15)
+                    value = myfont.render(newValue, 1, color)
+                    self.canvas.blit(value, (5,215))
+            
+                    pg.display.update()
+                    pg.event.clear()
+                    pg.event.wait()
+                    if(1): #self.readingNow is False):
+                        for event in pg.event.get():
+                                if event.type is pg.MOUSEBUTTONDOWN:
+                                    button = self.checkNumpad(event.pos)
+                                    if button is "d":
+                                        newValue = newValue[:-1]
+                                        self.canvas.fill((0,0,0))
+                                        self.numpad_event_screen()
+                                    elif button is "s":
+                                        return newValue
+                                    elif button is "b":
+                                        return
+                                    elif button is not "none":
+                                        newValue = newValue + button
+                except:
+                    pass
+            else:
+                self.numpad_event_screen()
 
     def quit(self):
         pg.quit()

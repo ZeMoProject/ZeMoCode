@@ -25,7 +25,7 @@ class App(object):
         print("ZēMō Initializing")
         self.screen = Screen()
         self.conn = Connection()
-        self.screen.drawMessage("ZeMo Initializing")
+        self.screen.drawImage("logo.png", self.screen.background.get_rect(), 223, 57)
         self.done = False
         self.takeReadFlag = True
         self.readingNow = False
@@ -35,10 +35,10 @@ class App(object):
         self.readsPerDay = jsonFile["settings"]["reads"]
         self.timeList = []
         piName = self.conn.getPiName()
-        self.phSensor = PH(jsonFile, piName)
-        self.condSensor = Conductivity(jsonFile, piName)
-        self.dOSensor = DissolvedOxygen(jsonFile, piName)
-        self.tempSensor = Temperature(jsonFile, piName)
+        self.phSensor = PH(jsonFile, piName, self.screen)
+        self.condSensor = Conductivity(jsonFile, piName, self.screen)
+        self.dOSensor = DissolvedOxygen(jsonFile, piName, self.screen)
+        self.tempSensor = Temperature(jsonFile, piName, self.screen)
         self.sensorList = []
         self.sensorList.append(self.condSensor)
         self.sensorList.append(self.dOSensor)
@@ -46,7 +46,7 @@ class App(object):
         self.sensorList.append(self.phSensor)
         self.t2 = Thread(target=App.checkTime_loop, args=(self,))
         self.t2.start()
-        self.update_reads_per_day()
+        self.update_reads_per_day()        
 
     def checkQuit(self, eventType):
         if eventType == pg.QUIT or pg.key.get_pressed()[pg.K_ESCAPE]:
@@ -57,9 +57,12 @@ class App(object):
 	# Checks the values and opens notify() if values are out of range, the ooR occurs here
     def takeReads_checkAlarms(self):
         sensors = []
+        jsonFile = self.conn.getConfigData()
+        self.daysToKeep = jsonFile["settings"]["days"]
+        self.readsPerDay = jsonFile["settings"]["reads"] 
+        self.update_reads_per_day()           
+        piName = self.conn.getPiName()        
         for sensor in self.sensorList:
-            jsonFile = self.conn.getConfigData()
-            piName = self.conn.getPiName()
             sensor.refresh(jsonFile, piName)            
             sensor.takeRead(self.conn)
             read = float(sensor.getCurrRead())
@@ -70,8 +73,8 @@ class App(object):
 
     # Updates the list of times checked in the CheckTime() function
     def update_reads_per_day(self):
-        if self.readsPerDay > 96:
-            self.readsPerDay = 96
+        if int(self.readsPerDay) > 96:
+            self.readsPerDay = "96"
         self.timeList = []
         hours = 24 / int(self.readsPerDay)
         i = 0.00
@@ -113,7 +116,6 @@ class App(object):
                         self.waitTime = 0
                     self.readingNow = True
                     #try:
-                    #    #TODO update this to go to the screen module taking_reads_loop
                     takingReads = Thread(target=App.taking_reads_loop, args=(self,))
                     takingReads.start()
                     #    #screens = {0 : self.main_menu_screen(),
@@ -141,6 +143,7 @@ class App(object):
                                 prob.currRead = str(avgRead2)"""
                     pg.event.clear()
                     self.readingNow = False
+                    time.sleep(2)
                 elif self.waitTime < int(currMin) and self.waitTime != 0:
                     self.takeReadFlag = True
                 #except Exception as e:
@@ -257,60 +260,22 @@ class App(object):
                                         sensor.refresh(jsonFile, piName)
                                     elif button is 5:
                                         return
-                                    else:                                         
-                                        button = self.screen.checkCollisionSmallBtns(event.pos)
-                                        if button is 2:
-                                                #try:
-                                                self.readingNow = True
-                                                takingReads = Thread(target=App.taking_reads_loop, args=(self,))
-                                                takingReads.start()
-                                                jsonFile = self.conn.getConfigData()
-                                                piName = self.conn.getPiName()
-                                                sensor.refresh(jsonFile, piName)                                              
-                                                sensor.takeRead(self.conn)
-                                                self.readingNow = False
-                                                #except:
-                                                #pass"""
-                                                time.sleep(1)
-                                                self.screen.update_event_screen(sensor)                                                                            
+                                    elif button is 8 or button is 4 or button is 3:
+                                        #try:
+                                        self.readingNow = True
+                                        takingReads = Thread(target=App.taking_reads_loop, args=(self,))
+                                        takingReads.start()
+                                        jsonFile = self.conn.getConfigData()
+                                        piName = self.conn.getPiName()
+                                        sensor.refresh(jsonFile, piName)                                              
+                                        sensor.takeRead(self.conn)
+                                        self.readingNow = False
+                                        #except:
+                                        #pass"""
+                                        time.sleep(1)
+                                        self.screen.update_event_screen(sensor)                                                                            
                     #except:
                     #pass
-
-    # Numpad
-    def numpad_event(self):
-        newValue = ""
-        self.numpad_event_screen()
-        color = pg.Color("yellow")
-        while(1):
-            if(self.readingNow == False):
-                try:
-                    pg.display.update() 
-                    myfont = pg.font.SysFont("monospace", 15)
-                    value = myfont.render(newValue, 1, color)
-                    self.canvas.blit(value, (5,215))
-            
-                    pg.display.update()
-                    pg.event.clear()
-                    pg.event.wait()
-                    if(self.readingNow == False):
-                        for event in pg.event.get():
-                                self.checkQuit(event.type)
-                                if event.type == pg.MOUSEBUTTONDOWN:
-                                    button = self.screen.checkNumpad(event.pos)
-                                    if button is "d":
-                                        newValue = newValue[:-1]
-                                        self.canvas.fill((0,0,0))
-                                        self.numpad_event_screen()
-                                    elif button is "s":
-                                        return newValue
-                                    elif button is "b":
-                                        return
-                                    elif button is not "none":
-                                        newValue = newValue + button
-                except:
-                    pass
-            else:
-                self.numpad_event_screen(lowUp, ulrange, cal)
 
     # Switches between the event loops depending on button pressed  
     def main_event_loop(self):
@@ -353,15 +318,12 @@ if __name__ == "__main__":
     main()
 
 """ Urgent """
-#TODO - X send all of reads out of range in one email
-#TODO - ask Dr Hill if he wants OoR email for manual readings
 #TODO - X grab Dr Hill's account and piName info
 #TODO - calibrations
+#   cond, ph, temp
 #TODO - reinstitute try/catch to all portions of code
-#TODO - X add the thread with checktime
 """ Screen """
-#TODO - create initializing screen on boot, draw the logo instead of text
-#TODO - maybe add take read to the button related and turn the low/high/take range into one btn
 #TODO - global variable with the current screen on it, so the checktime loop can 
 #   redraw the screen after taking scheduled readings
-#TODO - remove extra modules that are not used, just to be cleaner
+""" Other """
+#TODO - timeout thread, returns to main screen and blacks out

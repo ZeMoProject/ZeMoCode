@@ -1,6 +1,4 @@
 #!/usr/bin/python3.4
-import smtplib
-import email #try removing
 import socket
 import struct
 import fcntl
@@ -15,10 +13,6 @@ import json
 import urllib.request
 import urllib
 from Screen import Screen
-
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sockfd = sock.fileno()
-SIOCGIFADDR = 0x8915
 
 class Connection(object):
     def __init__(self):
@@ -80,17 +74,6 @@ class Connection(object):
     # Emails Log Data from pi
     def sendLogData(self, files):
         try:
-            """attachmentBody = ""
-            for file in files[:-1]:
-                s = ""
-
-                with open(file) as f:
-                    s = f.read() + '\n'
-                attachmentBody = { 
-                    "filename" : file,
-                    "content" : s 
-                } , attachmentBody     
-            """
             s1 = ""
             s3 = ""
             s4 = ""
@@ -103,10 +86,6 @@ class Connection(object):
                 s3 = f.read() + '\n'
             with open(files[3]) as f:
                 s4 = f.read() + '\n'                        
-            """attach2 = attachmentBody, { 
-                "filename" : files[-1],
-                "content" : s
-            }"""
 
             values = {
                 "body" : "Log Data",
@@ -150,7 +129,8 @@ class Connection(object):
             return req.json()
               
         except:
-            self.screen.drawMessage("Failed to grab Settings")      
+            self.screen.drawMessage("Failed to grab Settings")
+            time.sleep(2)     
 
     def sendReadings(self, values):
         try:
@@ -161,8 +141,7 @@ class Connection(object):
                         headers={'content-type': 'application/json', 'Authorization': bearer})
             response = urllib.request.urlopen(req)   
         except:
-            self.screen.drawMessage("Failed to send Readings") 
-            time.sleep(2)     
+            pass   
 
     def sendEmail(self, message):
         try:
@@ -186,14 +165,14 @@ class Connection(object):
             compiledMsg = "These sensors are out of range:"
             message = ""
             for probe in sensors:
-                message = message + "\n" + sensors.getName() + ": " + " \n".join(sensor.getData())
-            compiledMsg = compiledMsg + message
+                message = message + "\n" + probe.getName() + ": " + probe.getData()
+            compiledMsg = compiledMsg + message + " \nThe data here includes the trimmed readings."
             values = {
                     'body' : compiledMsg
                     }
 
             params = json.dumps(values).encode('utf8')
-            emailEndPoint = 'https://zemoproject.org/data/' + self.account + '/' + self.piName
+            emailEndPoint = 'https://zemoproject.org/notifications/' + self.account + '/' + self.piName
             bearer = 'Bearer ' + self.secret 
             req = urllib.request.Request(emailEndPoint, data=params,
                         headers={'content-type': 'application/json', 'Authorization': bearer})

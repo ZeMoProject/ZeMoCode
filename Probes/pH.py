@@ -1,7 +1,8 @@
 from Probes.Sensors import Sensors
 
 class PH(Sensors):
-    def __init__(self, jsonFile, piName):
+    def __init__(self, jsonFile, piName, screen):
+        self.screen = screen
         self.setValues()
         super().__init__(jsonFile, piName)
 
