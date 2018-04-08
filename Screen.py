@@ -148,7 +148,7 @@ class Screen(object):
             pg.display.update()     
 
     # Numpad screen
-    def numpad_event_screen(self):
+    def numpad_event_screen(self, title):
             self.canvas.fill((0,0,0))
             myfont = pg.font.SysFont("monospace", 60)
             color = pg.Color("yellow")
@@ -165,7 +165,7 @@ class Screen(object):
             self.drawText(".", myfont, color, self.period, 0, -10)
 
             myfont = pg.font.SysFont("monospace", 20)
-            title = myfont.render("Enter Calibration", 1, color)
+            title = myfont.render(str(title), 1, color)
             newRangeText = myfont.render("Cal. Value:", 1, color)
  
             myfont = pg.font.SysFont("monospace", 15)
@@ -354,9 +354,9 @@ class Screen(object):
         return "none"
 
     # Numpad
-    def numpad_event(self):
+    def numpad_event(self, title):
         newValue = ""
-        self.numpad_event_screen()
+        self.numpad_event_screen(title)
         color = pg.Color("yellow")
         while(1):
             if(1): #self.readingNow is False):
@@ -386,7 +386,7 @@ class Screen(object):
                 except:
                     pass
             else:
-                self.numpad_event_screen()
+                self.numpad_event_screen(title)
 
     def quit(self):
         pg.quit()

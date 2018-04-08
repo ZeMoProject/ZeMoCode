@@ -53,7 +53,7 @@ class Temperature(Sensors):
                                     if self.screen.btmRight.collidepoint(event.pos):
                                             self.screen.drawMessage("Calibrating...")                                        
                                             if stepNum is 0:
-                                                calNum = self.screen.numpad_event()
+                                                calNum = self.screen.numpad_event("Enter Calibration")
                                                 self.canvas.fill((0,0,0))
                                                 if calNum != "-1111" or calNum != "":                                                    
                                                     stepNum = 1
