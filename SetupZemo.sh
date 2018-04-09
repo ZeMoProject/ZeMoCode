@@ -11,16 +11,17 @@ fi
 
 #Set account
 read -p "ZeMo account name (Used to connect to online resources): " account
-cat $account > ~/ZeMoCode/ACCOUNT
+cat $account > ~/ZeMoCode/account
 
 #Move .profile to enable autostart
 cp ~/ZeMoCode/profile ~/.profile
 
 #Install modules
-sudo apt-get install pip3
-pip3 install yaml
+sudo apt-get update
+sudo apt-get install python3-pip
+pip3 install pyyaml
 
 #Install monitor drivers
-wget https://raw.githubusercontent.com/adafruit/Adafruit-PiTFT-Helper/master/adafruit-pitft-helper2.sh
-chmod +x adafruit-pitft-helper2.sh
-sudo ./adafruit-pitft-helper2.sh
+wget https://raw.githubusercontent.com/adafruit/Raspberry-Pi-Installer-Scripts/master/adafruit-pitft.sh
+chmod +x adafruit-pitft.sh
+sudo ./adafruit-pitft.sh
