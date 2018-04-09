@@ -20,12 +20,11 @@ class Connection(object):
         self.eth0 = self.get_ip("eth0")
         self.wlan0 = self.get_ip("wlan0")
         #TODO update link reference
-        with open("/home/pi/test/account") as f:
+        with open("/home/pi/ZeMoCode/account") as f:
             self.account = f.read()
-        with open("/home/pi/test/piName") as f:
-            self.piName = f.read()
+        self.piName = socket.gethostname()
         try:
-            self.accountJSON = json.load(open('/home/pi/test/account.json'))
+            self.accountJSON = json.load(open('/home/pi/ZeMoCode/account.json'))
             self.secret = self.accountJSON["secret"]        
         except:
             self.register()
@@ -33,12 +32,11 @@ class Connection(object):
 
     def resetAccount(self):
         #TODO update test to be the proper folder and all other subsequent calls
-        os.remove("/home/pi/test/account.json")
-        os.remove("/home/pi/test/account") 
-        os.remove("/home/pi/test/piName")   
+        os.remove("/home/pi/ZeMoCode/account.json")
+        os.remove("/home/pi/ZeMoCode/account")
         self.account = ""
         self.secret = ""
-        self.piName = ""        
+        self.piName = ""
 
     def getaccountJSON(self):
         return self.accountJSON
@@ -200,9 +198,9 @@ class Connection(object):
                 "piName" : self.piName
             }
             #TODO update test to be the proper folder
-            with open("/home/pi/test/account.json", "w") as f:
+            with open("/home/pi/ZeMoCode/account.json", "w") as f:
                 json.dump(cfg, f)            
-            self.accountJSON = json.load(open('/home/pi/test/account.json'))
+            self.accountJSON = json.load(open('/home/pi/ZeMoCode/account.json'))
         except Exception:
             self.screen.drawMessage("Unable to Register") 
             time.sleep(2)

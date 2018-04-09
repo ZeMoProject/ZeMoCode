@@ -318,7 +318,6 @@ if __name__ == "__main__":
     main()
 
 """ Urgent """
-#TODO - X grab Dr Hill's account and piName info
 #TODO - reinstitute try/catch to all portions of code
 """ Screen """
 #TODO - global variable with the current screen on it, so the checktime loop can 
