@@ -4,6 +4,7 @@ Cyan='\033[1;36m'
 NC='\033[0;0m'
 
 echo -e "${Cyan}
+
  ZZZZZZZZZZZZZZ EEEEEEEEEEE MMM      MMM OOOOOOOOOO
  ZZZZZZZZZZZZZ  EEEEEEEEEEE MMMM    MMMM OOOOOOOOOO
          ZZZZ               MMMMMMMMMMMM OO      OO
@@ -26,5 +27,5 @@ ${NC}"
 
 if [ "x${SSH_TTY}" = "x" ]; then
 sleep 10
-python3 ~/ZeMoCode/TouchScreen.py # Starts ZeMo interface
+python3 ~/ZeMoCode/Main.py # Starts ZeMo interface
 fi
