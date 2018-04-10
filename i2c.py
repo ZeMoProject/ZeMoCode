@@ -1,4 +1,5 @@
 #!/usr/bin/python3.4
+#TODO add attribution to atlas scientific
 
 import io         # used to create file streams
 import fcntl      # used to access I2C parameters like addresses

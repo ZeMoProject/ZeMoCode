@@ -93,7 +93,7 @@ class App(object):
     # Checks the time for taking automated reads
     def checkTime_loop(self):
         while(self.done != True):
-                #try:
+            try:
                 currMin = datetime.now().minute
                 currHour = datetime.now().hour
                 if int(currHour) < 1:
@@ -129,26 +129,14 @@ class App(object):
                     #    self.readingNow = False
                     #    pass
                     self.takeReads_checkAlarms()
-                    """
-                    for prob in self.sensorList:
-                        if(prob.i2cAddress != -1):
-                            #Same as last time
-                            
-                            reads = prob.takeRead()
-                            reads = reads[:-1]
-                            [float(i) for i in reads]
-                            if(len(reads) > 0):
-                                avgRead = sum(reads) / len(reads)
-                                avgRead2 = round(avgRead,1)
-                                prob.currRead = str(avgRead2)"""
                     pg.event.clear()
                     self.readingNow = False
                     time.sleep(2)
                 elif self.waitTime < int(currMin) and self.waitTime != 0:
                     self.takeReadFlag = True
-                #except Exception as e:
-                #self.readingNow = False
-                #pass
+            except Exception as e:
+                self.readingNow = False
+                pass
 
     # Advanced Settings
     def advanced_settings_event(self):
