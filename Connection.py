@@ -20,7 +20,7 @@ class Connection(object):
         self.eth0 = self.get_ip("eth0")
         self.wlan0 = self.get_ip("wlan0")
         #TODO update link reference
-        with open("/home/pi/ZeMoCode/account") as f:
+        with open("/home/pi/ZeMoCode/ACCOUNT") as f:
             self.account = f.read()
         self.piName = socket.gethostname()
         try:
@@ -33,7 +33,7 @@ class Connection(object):
     def resetAccount(self):
         #TODO update test to be the proper folder and all other subsequent calls
         os.remove("/home/pi/ZeMoCode/account.json")
-        os.remove("/home/pi/ZeMoCode/account")
+        os.remove("/home/pi/ZeMoCode/ACCOUNT")
         self.account = ""
         self.secret = ""
         self.piName = ""
