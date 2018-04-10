@@ -27,5 +27,5 @@ ${NC}"
 
 if [ "x${SSH_TTY}" = "x" ]; then
 sleep 10
-python3 ~/ZeMoCode/Main.py # Starts ZeMo interface
+#python3 ~/ZeMoCode/Main.py # Starts ZeMo interface
 fi
