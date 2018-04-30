@@ -11,7 +11,7 @@ fi
 
 #Set account
 read -p "ZeMo account name (Used to connect to online resources): " account
-cat $account > ~/ZeMoCode/account
+cat $account > ~/ZeMoCode/ACCOUNT
 
 #Move .profile to enable autostart
 cp ~/ZeMoCode/profile ~/.profile
