@@ -1,0 +1,19 @@
+[Desktop Entry]
+
+Name=ZeMo
+
+Type=Application
+
+Comment=Start ZeMo
+
+TryExec=/home/pi/ZeMoCode/Main.py
+
+Exec=sudo python3.4 /home/pi/ZeMoCode/Main.py
+
+Terminal=false
+
+StartupNotify=false
+
+Icon=/home/pi/ZeMoCode/zemo_icon.png
+
+Categories=Application;
