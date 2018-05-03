@@ -22,7 +22,7 @@ from Probes.Temperature import Temperature
 
 class App(object):
     def __init__(self):
-        print("ZēMō Initializing")
+        print("ZeMo Initializing")
         self.screen = Screen()
         self.conn = Connection()
         self.screen.drawImage("logo.png", self.screen.background.get_rect(), 223, 57)
@@ -54,7 +54,7 @@ class App(object):
             self.screen.quit()
             sys.exit()
 
-	# Checks the values and opens notify() if values are out of range, the ooR occurs here
+	# Checks the values and emails if values are out of range, the ooR occurs here
     def takeReads_checkAlarms(self):
         sensors = []
         jsonFile = self.conn.getConfigData()

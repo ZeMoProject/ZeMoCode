@@ -8,10 +8,9 @@ import sys
 import re
 import requests
 from subprocess import check_output
-import requests
 import json
-import urllib.request
 import urllib
+import urllib.request
 from Screen import Screen
 
 class Connection(object):
@@ -19,7 +18,7 @@ class Connection(object):
         self.screen = Screen()
         self.eth0 = self.get_ip("eth0")
         self.wlan0 = self.get_ip("wlan0")
-        #TODO update link reference
+
         with open("/home/pi/ZeMoCode/ACCOUNT") as f:
             self.account = f.read()
         self.piName = socket.gethostname()
@@ -61,7 +60,7 @@ class Connection(object):
 
     # Emails ip address
     def sendIP(self):
-        message = "zfish1 is up and running at (wired, wireless): " + get_ip("wlan0")
+        message = "zfish1 is up and running at (wired, wireless): " + self.get_ip("wlan0")
         self.sendEmail(message)
 
     # Emails the sensors that are not working
@@ -180,28 +179,53 @@ class Connection(object):
 
     def register(self):
         try:
+            f = open("/home/pi/ZeMoCode/log.txt", "a")
+            f.write("\nTesting:")
             values = {
                     "account" : self.account,
                     "name" : self.piName,
                     "ip_address" : self.get_ip("wlan0")
                     }
+            f.write("ip")
+            f.write(self.get_ip("wlan0"))
+            f.write("\naccount:")
+            f.write(self.account)
+            f.write("\npiName:")
+            f.write(self.piName)
+
             url = 'https://zemoproject.org/register'
             params = json.dumps(values)
             headers={'content-type': 'application/json'}            
             req = requests.post(url=url, json=values,headers=headers)
+            f.write("\nposted reqs")
+            f.write("\nattempt print screen")
+
             self.screen.register_screen()
+            f.write("\nprinted screen")
+
             sec = req.json()   
+            f.write("\nsecret:")
+            #f.write(sec)
             self.secret = sec["secret"]
+            
             cfg = { 
                 "secret" : self.secret,
                 "account" : self.account,
                 "piName" : self.piName
             }
-            #TODO update test to be the proper folder
-            with open("/home/pi/ZeMoCode/account.json", "w") as f:
-                json.dump(cfg, f)            
+            f.write("\nopen file cfg")
+            f.close()
+            with open("/home/pi/ZeMoCode/account.json", "w") as g:
+                json.dump(cfg, g)
+            f = open("/home/pi/ZeMoCode/log.txt", "a")                
+            f.write("\nclose cfg")
+                            
             self.accountJSON = json.load(open('/home/pi/ZeMoCode/account.json'))
+            f.write("\nend write")
+            
+            f.close()
         except Exception:
+            f.close()
             self.screen.drawMessage("Unable to Register") 
             time.sleep(2)
             self.register()

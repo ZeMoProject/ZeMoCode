@@ -37,13 +37,10 @@ class Conductivity(Sensors):
             self.canvas.fill((0,0,0))
             if(1): #self.readingNow == False):
                 while(1):
-                    pg.gfxdraw.rectangle(self.canvas, self.screen.backBtn, color)
-                    pg.draw.polygon(self.canvas, color, ((30,17),(30,25),(30,17),(10,17),(15,23),(10,17),(15,11),(10,17)), 1)
+                    self.screen.drawImage("back_btn.png", self.screen.backBtn, 35, 35)            
                     pg.gfxdraw.rectangle(self.canvas, self.screen.btmRight, color)
-                    myfont = pg.font.SysFont("monospace", 20)
-                    self.screen.drawTitle("Calibrate pH", myfont, color) 
-                    myfont = pg.font.SysFont("monospace", 18)
-                    self.screen.drawText("Calibrate", myfont, color, self.screen.btmRight, 0, 0)
+                    self.screen.drawTitle("Calibrate pH", 20, color) 
+                    self.screen.drawText("Calibrate", 18, color, self.screen.btmRight, 0, 0)
                     pg.event.clear()
                     pg.display.update()     
                     pg.event.wait()
@@ -60,7 +57,7 @@ class Conductivity(Sensors):
                                                         if super().tryThree('CAL,clear'):
                                                             stepNum = 1
                                                             self.canvas.fill((0,0,0))
-                                                            self.screen.drawText("1. Starts with dry calibration", myfont, color, self.screen.topLeft, 60, -30)
+                                                            self.screen.drawText("1. Starts with dry calibration", 15, color, self.screen.topLeft, 60, -30)
                                             elif stepNum == 1:
                                                 if super().tryThree('CAL,dry'):
                                                     stepNum = 2
@@ -68,10 +65,9 @@ class Conductivity(Sensors):
                                                     pg.display.update()
                                                     time.sleep(1)
                                                     self.canvas.fill((0,0,0))
-                                                    myfont = pg.font.SysFont("monospace", 15)
-                                                    self.screen.drawText("1. Pour solution in cup", myfont, color, self.screen.topLeft, 60, -30)
-                                                    self.screen.drawText("2. Shake probe", myfont, color, self.screen.topLeft, 60, -10)
-                                                    self.screen.drawText("3. Sit probe in solution", myfont, color, self.screen.topLeft, 60, 10)
+                                                    self.screen.drawText("1. Pour solution in cup", 15, color, self.screen.topLeft, 60, -30)
+                                                    self.screen.drawText("2. Shake probe", 15, color, self.screen.topLeft, 60, -10)
+                                                    self.screen.drawText("3. Sit probe in solution", 15, color, self.screen.topLeft, 60, 10)
                                                     pg.display.update()                 
                                             elif stepNum == 2:
                                                     self.canvas.fill((0,0,0))

@@ -16,7 +16,7 @@ cat $account > ~/ZeMoCode/ACCOUNT
 #Move .profile to enable autostart
 cp ~/ZeMoCode/profile ~/.profile
 cp ~/ZeMoCode/ZeMo.desktop ~/Desktop/
-sudo chmod 777 ~/Destop/ZeMo.desktop
+chmod 777 ~/Destop/ZeMo.desktop
 
 #Install monitor drivers
 wget https://raw.githubusercontent.com/adafruit/Raspberry-Pi-Installer-Scripts/master/adafruit-pitft.sh

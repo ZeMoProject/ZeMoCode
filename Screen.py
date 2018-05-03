@@ -14,90 +14,115 @@ class Screen(object):
         pg.display.set_caption(CAPTION)
         pg.display.set_mode(SCREEN_SIZE)
         #TESTING
-        #pg.display.toggle_fullscreen()
+        pg.display.toggle_fullscreen()
         self.canvas = pg.display.get_surface()
         self.background = pygame.Surface(self.canvas.get_size())
         self.keys = pg.key.get_pressed()
         # Hides Mouse, still allows click events
         pg.mouse.set_cursor((8,8),(0,0),(0,0,0,0,0,0,0,0),(0,0,0,0,0,0,0,0))
+        
+        leftOffset = self.convertWidth(5)
+        rightOffset = self.convertWidth(162.5)
+        height = self.convertHeight(92.5)
+        widthNormal = self.convertWidth(152.5)
+        widthSmall = self.convertWidth(100)
+        topTop = self.convertHeight(45)
+        topBtm = self.convertHeight(142.5)
+        topMid = self.convertHeight(92.5)
+        backBtnW = self.convertWidth(35)
+        backBtnH = self.convertHeight(35) 
+        numHeight = self.convertWidth(70)
+        numWidth = self.convertWidth(58)
+        numTop =self.convertHeight(120) 
+        numBtmTop = self.convertHeight(195) 
+        btmBtnTop = self.convertHeight(5) 
+        midLeftOffset = self.convertWidth(83.75)
+        leftTwo = self.convertWidth(68)
+        leftThree = self.convertWidth(131)
+        leftFour = self.convertWidth(194)
+        leftFive = self.convertWidth(257)
 
-        self.topLeft = pg.Rect(5,45,152.5,92.5)
-        self.btmLeftSmall = pg.Rect(5,142.5,100,92.5)
-        self.btmMidSmall = pg.Rect(110,142.5,100,92.5)
-        self.btmRightSmall = pg.Rect(215,142.5,100,92.5)
-        self.btmLeft = pg.Rect(5,142.5,152.5,92.5)
-        self.topRight = pg.Rect(162.5,45,152.5,92.5)
-        self.btmBar = pg.Rect(5, 142.5, 310, 92.5)
+        self.topLeft = pg.Rect(leftOffset,topTop,widthNormal,height)
+        self.btmLeftSmall = pg.Rect(leftOffset,topBtm,widthSmall,height)
+        self.btmMidSmall = pg.Rect(self.convertWidth(110),topBtm,widthSmall,height)
+        self.btmRightSmall = pg.Rect(self.convertWidth(215),topBtm,widthSmall,height)
+        self.btmLeft = pg.Rect(leftOffset,topBtm,widthNormal,height)
+        self.topRight = pg.Rect(rightOffset,topTop,widthNormal,height)
+        self.btmBar = pg.Rect(leftOffset, topBtm, self.convertWidth(310), height)
 
-        self.midLeft = pg.Rect(5,92.5,152.5,92.5)
-        self.midRight = pg.Rect(162.5,92.5,152.5,92.5)
-        self.centerBtn = pg.Rect(83.75,92.5,152.5,92.5)
+        self.midLeft = pg.Rect(leftOffset,topMid,widthNormal,height)
+        self.midRight = pg.Rect(rightOffset,topMid,widthNormal,height)
+        self.centerBtn = pg.Rect(midLeftOffset,topMid,widthNormal,height)
 
-        self.btmRight = pg.Rect(162.5,142.5,152.5,92.5)
-        self.backBtn = pg.Rect(5,5,35,35)
-        self.middleBtn = pg.Rect(83.75,45,152.5,92.5)
-        self.settingsBtn = pg.Rect(280,5,35,35)
+        self.btmRight = pg.Rect(rightOffset,topBtm,widthNormal,height)
+        self.backBtn = pg.Rect(leftOffset,btmBtnTop,backBtnW,backBtnH)
+        self.middleBtn = pg.Rect(midLeftOffset,topTop,widthNormal,height)
+        self.settingsBtn = pg.Rect(self.convertWidth(280),btmBtnTop,backBtnW,backBtnH)
 
-        self.one = pg.Rect(5,45,58,70)
-        self.two = pg.Rect(68,45,58,70)
-        self.three = pg.Rect(131,45,58,70)
-        self.four = pg.Rect(194,45,58,70)
-        self.five = pg.Rect(257,45,58,70)
-        self.six = pg.Rect(5,120,58,70)
-        self.seven = pg.Rect(68,120,58,70)
-        self.eight = pg.Rect(131,120,58,70)
-        self.nine = pg.Rect(194,120,58,70)
-        self.zero = pg.Rect(257,120,58,70)
-        self.period = pg.Rect(257,195,58,35)
-        self.submitBtn = pg.Rect(194,195,58,35)
-        self.deleteBtn = pg.Rect(257,5,58,35)
+        self.one = pg.Rect(leftOffset,topTop,numWidth,numHeight)
+        self.two = pg.Rect(leftTwo,topTop,numWidth,numHeight)
+        self.three = pg.Rect(leftThree,topTop,numWidth,numHeight)
+        self.four = pg.Rect(leftFour,topTop,numWidth,numHeight)
+        self.five = pg.Rect(leftFive,topTop,numWidth,numHeight)
+        self.six = pg.Rect(leftOffset,numTop,numWidth,numHeight)
+        self.seven = pg.Rect(leftTwo,numTop,numWidth,numHeight)
+        self.eight = pg.Rect(leftThree,numTop,numWidth,numHeight)
+        self.nine = pg.Rect(leftFour,numTop,numWidth,numHeight)
+        self.zero = pg.Rect(leftFive,numTop,numWidth,numHeight)
+        self.period = pg.Rect(leftFive,numBtmTop,numWidth,backBtnH)
+        self.submitBtn = pg.Rect(leftFour,numBtmTop,numWidth,backBtnH)
+        self.deleteBtn = pg.Rect(leftFive,btmBtnTop,numWidth,backBtnH)
+
+    def convertWidth(self, size):
+        width = (size/320) * SCREEN_WIDTH
+        return width
+
+    def convertHeight(self, size):
+        height = (size/240) * SCREEN_HEIGHT
+        return height
 
     # Settings screen
     def settings_event_screen(self, eth0, wlan0, readsPerDay, daysToKeep):
             self.canvas.fill((0,0,0))
             color = pg.Color("yellow")
 
-            myfont = pg.font.SysFont("monospace", 18)            
-            self.drawText(str(wlan0), myfont, color, self.topLeft, 0, 30)
-            self.drawText(str(eth0), myfont, color, self.topLeft, 0, 0)
+            self.drawText(str(wlan0), 18, color, self.topLeft, 0, 30)
+            self.drawText(str(eth0), 18, color, self.topLeft, 0, 0)
 
-            myfont = pg.font.SysFont("monospace", 20)
-            self.drawText("ip Address:", myfont, color, self.topLeft, 0, -30)
-            self.drawText("Refresh", myfont, color, self.topRight, 0, -10)
-            self.drawText("Sensors", myfont, color, self.topRight, 0, 10)
-            self.drawText("Days Kept:", myfont, color, self.btmLeft, 0, -10)
-            self.drawText("Reads/Day:", myfont, color, self.btmRight, 0, -10)
-            self.drawText(str(readsPerDay), myfont, color, self.btmRight, 0, 10)
-            self.drawText(str(daysToKeep), myfont, color, self.btmLeft, 0, 10)           
+            self.drawText("ip Address:", 20, color, self.topLeft, 0, -30)
+            self.drawText("Refresh", 20, color, self.topRight, 0, -10)
+            self.drawText("Sensors", 20, color, self.topRight, 0, 10)
+            self.drawText("Days Kept:", 20, color, self.btmLeft, 0, -10)
+            self.drawText("Reads/Day:", 20, color, self.btmRight, 0, -10)
+            self.drawText(str(readsPerDay), 20, color, self.btmRight, 0, 10)
+            self.drawText(str(daysToKeep), 20, color, self.btmLeft, 0, 10)           
 
             self.drawImage("settings_icon.png", self.settingsBtn, 35, 35)
-            self.drawTitle("Settings", myfont, color)            
+            self.drawTitle("Settings", 20, color)            
 
-            tLeft = pg.gfxdraw.rectangle(self.canvas, self.topLeft, color)
-            bLeft = pg.gfxdraw.rectangle(self.canvas, self.btmLeft, color)
-            tRight = pg.gfxdraw.rectangle(self.canvas, self.topRight, color)
-            bRight = pg.gfxdraw.rectangle(self.canvas, self.btmRight, color)
-            pg.gfxdraw.rectangle(self.canvas, self.backBtn, color)
-            pg.draw.polygon(self.canvas, color, ((30,17),(30,25),(30,17),(10,17),(15,23),(10,17),(15,11),(10,17)), 1)
+            pg.gfxdraw.rectangle(self.canvas, self.topLeft, color)
+            pg.gfxdraw.rectangle(self.canvas, self.btmLeft, color)
+            pg.gfxdraw.rectangle(self.canvas, self.topRight, color)
+            pg.gfxdraw.rectangle(self.canvas, self.btmRight, color)
+            self.drawImage("back_btn.png", self.backBtn, 35, 35)            
             pg.display.update()
 
     # Screen shows "Taking Reads..."
     def taking_reads_loop(self):
         color = pg.Color("steelblue1")
-        myfont = pg.font.SysFont("monospace", 15)
         #add while loop starting here, for when threading occurs
-        self.drawText("Taking Reads   ", myfont, color, self.background.get_rect(), 0, 0)                   
-        self.drawText("Taking Reads   ", myfont, color, self.background.get_rect(), 0, 0)                   
-        self.drawText("Taking Reads   ", myfont, color, self.background.get_rect(), 0, 0)                   
+        self.drawText("Taking Reads   ", 15, color, self.background.get_rect(), 0, 0)                   
+        self.drawText("Taking Reads   ", 15, color, self.background.get_rect(), 0, 0)                   
+        self.drawText("Taking Reads   ", 15, color, self.background.get_rect(), 0, 0)                   
         pg.display.update()
         time.sleep(2)
-        self.drawText("Taking Reads.  ", myfont, color, self.background.get_rect(), 0, 0)                   
+        self.drawText("Taking Reads.  ", 15, color, self.background.get_rect(), 0, 0)                   
         pg.display.update()
         time.sleep(2)                  
-        self.drawText("Taking Reads.. ", myfont, color, self.background.get_rect(), 0, 0)                   
+        self.drawText("Taking Reads.. ", 15, color, self.background.get_rect(), 0, 0)                   
         pg.display.update()
         time.sleep(2)
-        self.drawText("Taking Reads...", myfont, color, self.background.get_rect(), 0, 0)                   
+        self.drawText("Taking Reads...", 15, color, self.background.get_rect(), 0, 0)                   
         pg.display.update()
         time.sleep(2)
         self.canvas.fill((0,0,0))
@@ -106,41 +131,37 @@ class Screen(object):
     def advanced_settings_event_screen(self):
         self.canvas.fill((0,0,0))
 
-        myfont = pg.font.SysFont("monospace", 20)
         color = pg.Color("plum1")
-        self.drawText("EXIT", myfont, color, self.btmRight, 0, 0)
-        self.drawText("Email Data", myfont, color, self.middleBtn, 0, 0)
-        self.drawText("Re-Register", myfont, color, self.btmLeft, 0, 0)
+        self.drawText("EXIT", 20, color, self.btmRight, 0, 0)
+        self.drawText("Email Data", 20, color, self.middleBtn, 0, 0)
+        self.drawText("Re-Register", 20, color, self.btmLeft, 0, 0)
 
         pg.gfxdraw.rectangle(self.canvas, self.btmLeft, color)
         pg.gfxdraw.rectangle(self.canvas, self.btmRight, color)
         pg.gfxdraw.rectangle(self.canvas, self.middleBtn, color)
 
-        self.drawTitle("Advanced Settings", myfont, color)            
+        self.drawTitle("Advanced Settings", 20, color)            
 
-        pg.gfxdraw.rectangle(self.canvas, self.backBtn, color)
-        pg.draw.polygon(self.canvas, color, ((30,17),(30,25),(30,17),(10,17),(15,23),(10,17),(15,11),(10,17)), 1)       
+        self.drawImage("back_btn.png", self.backBtn, 35, 35)            
         pg.display.update()
 
     # Update range values screen
     def update_event_screen(self, sensor):
             self.canvas.fill((0,0,0))
-            myfont = pg.font.SysFont("monospace", 20)
             color = pg.Color("orange")
-            self.drawTitle(str(sensor.getName()), myfont, color)                        
-            pg.draw.polygon(self.canvas, color, ((30,17),(30,25),(30,17),(10,17),(15,23),(10,17),(15,11),(10,17)), 1)
+            self.drawTitle(str(sensor.getName()), 20, color)                        
+            self.drawImage("back_btn.png", self.backBtn, 35, 35)            
 
-            self.drawText(str(sensor.getCurrRead()), myfont, color, self.btmMidSmall, 0, 25)
-            self.drawText("Low", myfont, color, self.btmLeftSmall, 0, 5)
-            self.drawText("High", myfont, color, self.btmRightSmall, 0, 5)
-            self.drawText("Take Read", myfont, color, self.btmMidSmall, 0, -25)
-            self.drawText("Current", myfont, color, self.btmMidSmall, 0, 5)
-            self.drawText(str(sensor.getLowRange()), myfont, color, self.btmLeftSmall, 0, 25)
-            self.drawText(str(sensor.getHighRange()), myfont, color, self.btmRightSmall, 0, 25)
-            self.drawText("Calibrate", myfont, color, self.topLeft, 0, 0)
-            self.drawText("Refresh", myfont, color, self.topRight, 0, 0)
+            self.drawText(str(sensor.getCurrRead()), 20, color, self.btmMidSmall, 0, 25)
+            self.drawText("Low", 20, color, self.btmLeftSmall, 0, 5)
+            self.drawText("High", 20, color, self.btmRightSmall, 0, 5)
+            self.drawText("Take Read", 20, color, self.btmMidSmall, 0, -25)
+            self.drawText("Current", 20, color, self.btmMidSmall, 0, 5)
+            self.drawText(str(sensor.getLowRange()), 20, color, self.btmLeftSmall, 0, 25)
+            self.drawText(str(sensor.getHighRange()), 20, color, self.btmRightSmall, 0, 25)
+            self.drawText("Calibrate", 20, color, self.topLeft, 0, 0)
+            self.drawText("Refresh", 20, color, self.topRight, 0, 0)
 
-            pg.gfxdraw.rectangle(self.canvas, self.backBtn, color)
             pg.gfxdraw.rectangle(self.canvas, self.topLeft, color)
             pg.gfxdraw.rectangle(self.canvas, self.btmBar, color)
             pg.gfxdraw.rectangle(self.canvas, self.topRight, color)
@@ -150,27 +171,25 @@ class Screen(object):
     # Numpad screen
     def numpad_event_screen(self, title):
             self.canvas.fill((0,0,0))
-            myfont = pg.font.SysFont("monospace", 60)
             color = pg.Color("yellow")
-            self.drawText("1", myfont, color, self.one, 0, 0)
-            self.drawText("2", myfont, color, self.two, 0, 0)
-            self.drawText("3", myfont, color, self.three, 0, 0)
-            self.drawText("4", myfont, color, self.four, 0, 0)
-            self.drawText("5", myfont, color, self.five, 0, 0)
-            self.drawText("6", myfont, color, self.six, 0, 0)
-            self.drawText("7", myfont, color, self.seven, 0, 0)
-            self.drawText("8", myfont, color, self.eight, 0, 0)
-            self.drawText("9", myfont, color, self.nine, 0, 0)
-            self.drawText("0", myfont, color, self.zero, 0, 0)
-            self.drawText(".", myfont, color, self.period, 0, -10)
+            self.drawText("1", 60, color, self.one, 0, 0)
+            self.drawText("2", 60, color, self.two, 0, 0)
+            self.drawText("3", 60, color, self.three, 0, 0)
+            self.drawText("4", 60, color, self.four, 0, 0)
+            self.drawText("5", 60, color, self.five, 0, 0)
+            self.drawText("6", 60, color, self.six, 0, 0)
+            self.drawText("7", 60, color, self.seven, 0, 0)
+            self.drawText("8", 60, color, self.eight, 0, 0)
+            self.drawText("9", 60, color, self.nine, 0, 0)
+            self.drawText("0", 60, color, self.zero, 0, 0)
+            self.drawText(".", 60, color, self.period, 0, -10)
 
-            myfont = pg.font.SysFont("monospace", 20)
+            myfont = pg.font.SysFont("monospace", int(round(self.convertHeight(20))))
             title = myfont.render(str(title), 1, color)
             newRangeText = myfont.render("Cal. Value:", 1, color)
  
-            myfont = pg.font.SysFont("monospace", 15)
-            self.drawText("Submit", myfont, color, self.submitBtn, 0, 0)
-            pg.draw.polygon(self.canvas, color, ((305,21),(265,21),(275,27),(265,21),(275,14),(265,21)), 2)
+            self.drawText("Submit", 15, color, self.submitBtn, 0, 0)
+            self.drawImage("back_btn.png", self.backBtn, 35, 35)            
 
             pg.gfxdraw.rectangle(self.canvas, self.one, color)
             pg.gfxdraw.rectangle(self.canvas, self.two, color)
@@ -186,23 +205,22 @@ class Screen(object):
             pg.gfxdraw.rectangle(self.canvas, self.submitBtn, color)
             pg.gfxdraw.rectangle(self.canvas, self.deleteBtn, color)
 
-            self.canvas.blit(newRangeText, (5,195))
-            self.canvas.blit(title, (50,10))
+            self.canvas.blit(newRangeText, (self.convertWidth(5),self.convertHeight(195)))
+            self.canvas.blit(title, (self.convertWidth(50),self.convertHeight(10)))
             pg.display.update()
 
     def main_menu_screen(self, condRead, dORead, phRead, tempRead):
             self.canvas.fill((0,0,0))
-            myfont = pg.font.SysFont("monospace", 20)
             color = pg.Color("green")
-            self.drawTitle("Current Reads", myfont, color)
-            self.drawText("pH:", myfont, color, self.btmLeft, 0, -10)
-            self.drawText("Cond:", myfont, color, self.topLeft, 0, -10)
-            self.drawText("DO:", myfont, color, self.topRight, 0, -10)
-            self.drawText("Temp:", myfont, color, self.btmRight, 0, -10)
-            self.drawText(str(condRead), myfont, color, self.topLeft, 0, 10)
-            self.drawText(str(phRead), myfont, color, self.btmLeft, 0, 10)
-            self.drawText(str(dORead), myfont, color, self.topRight, 0, 10)
-            self.drawText(str(tempRead), myfont, color, self.btmRight, 0, 10)            
+            self.drawTitle("Current Reads", 20, color)
+            self.drawText("pH:", 20, color, self.btmLeft, 0, -10)
+            self.drawText("Cond:", 20, color, self.topLeft, 0, -10)
+            self.drawText("DO:", 20, color, self.topRight, 0, -10)
+            self.drawText("Temp:", 20, color, self.btmRight, 0, -10)
+            self.drawText(str(condRead), 20, color, self.topLeft, 0, 10)
+            self.drawText(str(phRead), 20, color, self.btmLeft, 0, 10)
+            self.drawText(str(dORead), 20, color, self.topRight, 0, 10)
+            self.drawText(str(tempRead), 20, color, self.btmRight, 0, 10)            
                        
             pg.gfxdraw.rectangle(self.canvas, self.topLeft, color)
             pg.gfxdraw.rectangle(self.canvas, self.btmLeft, color)
@@ -214,12 +232,11 @@ class Screen(object):
     def register_screen(self):
         self.canvas.fill((0,0,0))        
         color = pg.Color("steelblue1")
-        myfont = pg.font.SysFont("monospace", 15)
-        self.drawTitle("Register Your Pi", myfont, color)
-        self.drawText("You must click \"Accept\" on the", myfont, color, self.centerBtn, 0, -95) 
-        self.drawText("\"Manage Your Connections\" screen", myfont, color, self.centerBtn, 0, -80)
-        self.drawText("before clicking on \"Register\"", myfont, color, self.centerBtn, 0, -65)         
-        self.drawText("Register", myfont, color, self.centerBtn, 0, 0)
+        self.drawTitle("Register Your Pi", 15, color)
+        self.drawText("You must click \"Accept\" on the", 15, color, self.centerBtn, 0, -95) 
+        self.drawText("\"Manage Your Connections\" screen", 15, color, self.centerBtn, 0, -80)
+        self.drawText("before clicking on \"Register\"", 15, color, self.centerBtn, 0, -65)         
+        self.drawText("Register", 15, color, self.centerBtn, 0, 0)
         pg.gfxdraw.rectangle(self.canvas, self.centerBtn, color)   
         pg.display.update()
         while(1):
@@ -233,12 +250,10 @@ class Screen(object):
     def reregister(self):
         self.canvas.fill((0,0,0))        
         color = pg.Color("steelblue1")
-        myfont = pg.font.SysFont("monospace", 15)
-        self.drawTitle("Re-Register Your Pi", myfont, color)
-        self.drawText("Are you sure?", myfont, color, self.centerBtn, 0, -95)         
-        myfont = pg.font.SysFont("monospace", 24)        
-        self.drawText("Yes", myfont, color, self.midLeft, 0, 0)
-        self.drawText("No", myfont, color, self.midRight, 0, 0)        
+        self.drawTitle("Re-Register Your Pi", 15, color)
+        self.drawText("Are you sure?", 15, color, self.centerBtn, 0, -95)         
+        self.drawText("Yes", 24, color, self.midLeft, 0, 0)
+        self.drawText("No", 24, color, self.midRight, 0, 0)        
         pg.gfxdraw.rectangle(self.canvas, self.midRight, color) 
         pg.gfxdraw.rectangle(self.canvas, self.midLeft, color)             
         pg.display.update()
@@ -254,8 +269,7 @@ class Screen(object):
 
     def drawImage(self, imageName, location, width, height):
         image = pg.image.load("/home/pi/ZeMoCode/images/" + str(imageName))
-        imageTransform = pg.transform.scale(image, (width, height))
-
+        imageTransform = pg.transform.scale(image, (int(round(self.convertWidth(width))),int(round(self.convertHeight(height)))))
         imageRect = imageTransform.get_rect()
         imageRect.centerx = location.centerx
         imageRect.centery = location.centery        
@@ -263,34 +277,36 @@ class Screen(object):
         pg.display.update()
 
     # Draws normal text
-    def drawText(self, text, myfont, color, location, xOffset, yOffset):
+    def drawText(self, text, textSize, color, location, xOffset, yOffset):
+        myfont = pg.font.SysFont("monospace", int(round(self.convertHeight(textSize))))
         textPrint = myfont.render(text, 1, color)        
         textpos = textPrint.get_rect()
-        textpos.centerx = location.centerx + xOffset
-        textpos.centery = location.centery + yOffset
+        textpos.centerx = location.centerx + self.convertWidth(xOffset)
+        textpos.centery = location.centery + self.convertHeight(yOffset)
         self.canvas.blit(textPrint, textpos)
 
     # Draws the titles
-    def drawTitle(self, title, myfont, color):
+    def drawTitle(self, title, textSize, color):
+        myfont = pg.font.SysFont("monospace", int(round(self.convertHeight(textSize))))              
         myfont.set_underline(True)
         textPrint = myfont.render(title, 1, color)                
         textpos = textPrint.get_rect()
         textpos.centerx = self.background.get_rect().centerx
-        textpos.centery = self.background.get_rect().top + 20
+        textpos.centery = self.background.get_rect().top + self.convertHeight(20)
         self.canvas.blit(textPrint, textpos)
         myfont.set_underline(False)       
 
     def drawMessage(self, text):
         self.canvas.fill((0,0,0))        
         color = pg.Color("steelblue1")
-        myfont = pg.font.SysFont("monospace", 20)         
+        myfont = pg.font.SysFont("monospace", int(round(self.convertHeight(20))))         
         textPrint = myfont.render(text, 1, color)        
         textpos = textPrint.get_rect()
         textpos.centerx = self.background.get_rect().centerx
         textpos.centery = self.background.get_rect().centery
         self.canvas.blit(textPrint, textpos)
         pg.display.update()                
-    
+
     # For all screens except numpad
     def checkCollision(self, eventPos):
         if self.topLeft.collidepoint(eventPos):
@@ -362,9 +378,9 @@ class Screen(object):
             if(1): #self.readingNow is False):
                 try:
                     pg.display.update() 
-                    myfont = pg.font.SysFont("monospace", 15)
+                    myfont = pg.font.SysFont("monospace", int(round(self.convertHeight(15))))
                     value = myfont.render(newValue, 1, color)
-                    self.canvas.blit(value, (5,215))
+                    self.canvas.blit(value, (self.convertWidth(5),self.convertHeight(215)))
             
                     pg.display.update()
                     pg.event.clear()
