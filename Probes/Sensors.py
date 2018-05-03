@@ -32,6 +32,7 @@ class Sensors(object):
             read2 = self.getRead()
             self.currRead = str(read2)        
             self.setFilename(piName)
+            self.jsonFile = jsonFile
             self.lowRange = jsonFile["settings"][self.tag][0]
             self.highRange = jsonFile["settings"][self.tag][1]
             self.data = []
@@ -149,8 +150,10 @@ class Sensors(object):
                     except:
                         pass
                         #print("Failed to trim readings")
-                if(sum(reads) != 0):                    
+                if(sum(reads) != 0 and len(reads) > 0):                    
                     avgRead = float(sum(reads))/len(reads)
+                else:
+                    avgRead = 0
                 self.currRead = avgRead    
                 outFile = open(self.filename, 'a')
                 file2 = self.filename[:-4]

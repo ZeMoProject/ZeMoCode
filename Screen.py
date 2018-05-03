@@ -2,6 +2,7 @@
 import os, sys, re
 import pygame as pg
 import pygame.gfxdraw
+import time
 
 # Configures parameters
 CAPTION = "Current Reads"
@@ -185,7 +186,7 @@ class Screen(object):
             self.drawText(".", 60, color, self.period, 0, -10)
 
             myfont = pg.font.SysFont("monospace", int(round(self.convertHeight(20))))
-            title = myfont.render(str(title), 1, color)
+            title2 = myfont.render(str(title), 1, color)
             newRangeText = myfont.render("Cal. Value:", 1, color)
  
             self.drawText("Submit", 15, color, self.submitBtn, 0, 0)
@@ -206,7 +207,7 @@ class Screen(object):
             pg.gfxdraw.rectangle(self.canvas, self.deleteBtn, color)
 
             self.canvas.blit(newRangeText, (self.convertWidth(5),self.convertHeight(195)))
-            self.canvas.blit(title, (self.convertWidth(50),self.convertHeight(10)))
+            self.canvas.blit(title2, (self.convertWidth(50),self.convertHeight(10)))
             pg.display.update()
 
     def main_menu_screen(self, condRead, dORead, phRead, tempRead):
@@ -392,7 +393,7 @@ class Screen(object):
                                     if button is "d":
                                         newValue = newValue[:-1]
                                         self.canvas.fill((0,0,0))
-                                        self.numpad_event_screen()
+                                        self.numpad_event_screen(title)
                                     elif button is "s":
                                         return newValue
                                     elif button is "b":
