@@ -49,45 +49,54 @@ class App(object):
         self.update_reads_per_day()        
 
     def checkQuit(self, eventType):
-        if eventType == pg.QUIT or pg.key.get_pressed()[pg.K_ESCAPE]:
-            self.done = True
-            self.screen.quit()
-            sys.exit()
+        try:
+            if eventType == pg.QUIT or pg.key.get_pressed()[pg.K_ESCAPE]:
+                self.done = True
+                self.screen.quit()
+                sys.exit()
+        except:
+            pass
 
 	# Checks the values and emails if values are out of range, the ooR occurs here
     def takeReads_checkAlarms(self):
-        sensors = []
-        jsonFile = self.conn.getConfigData()
-        self.daysToKeep = jsonFile["settings"]["days"]
-        self.readsPerDay = jsonFile["settings"]["reads"] 
-        self.update_reads_per_day()           
-        piName = self.conn.getPiName()        
-        for sensor in self.sensorList:
-            sensor.refresh(jsonFile, piName)            
-            sensor.takeRead(self.conn)
-            read = float(sensor.getCurrRead())
-            if read > float(sensor.getHighRange()) or read < float(sensor.getLowRange()):
-                sensors.append(sensor)
-        if len(sensors) > 0:
-            self.conn.sendOutofRange(sensors)
+        try:
+            sensors = []
+            jsonFile = self.conn.getConfigData()
+            self.daysToKeep = jsonFile["settings"]["days"]
+            self.readsPerDay = jsonFile["settings"]["reads"] 
+            self.update_reads_per_day()           
+            piName = self.conn.getPiName()        
+            for sensor in self.sensorList:
+                sensor.refresh(jsonFile, piName)            
+                sensor.takeRead(self.conn)
+                read = float(sensor.getCurrRead())
+                if read > float(sensor.getHighRange()) or read < float(sensor.getLowRange()):
+                    sensors.append(sensor)
+            if len(sensors) > 0:
+                self.conn.sendOutofRange(sensors)
+        except:
+            pass
 
     # Updates the list of times checked in the CheckTime() function
     def update_reads_per_day(self):
-        if int(self.readsPerDay) > 96:
-            self.readsPerDay = "96"
-        self.timeList = []
-        hours = 24 / int(self.readsPerDay)
-        i = 0.00
-        j = 0.00
-        while i < 24:
-            i = hours + i
-            if i < 24:
-                addHour = int(i)
-                y = i % 1
-                j = (y * 60) / 100
-                addTime = addHour + round(j, 2)
-                addThis = str(round(addTime, 2))
-                self.timeList.append(addThis)
+        try:
+            if int(self.readsPerDay) > 96:
+                self.readsPerDay = "96"
+            self.timeList = []
+            hours = 24 / int(self.readsPerDay)
+            i = 0.00
+            j = 0.00
+            while i < 24:
+                i = hours + i
+                if i < 24:
+                    addHour = int(i)
+                    y = i % 1
+                    j = (y * 60) / 100
+                    addTime = addHour + round(j, 2)
+                    addThis = str(round(addTime, 2))
+                    self.timeList.append(addThis)
+        except:
+            pass
 
     # A constantly running loop that has an individual thread
     # Checks the time for taking automated reads
@@ -140,97 +149,106 @@ class App(object):
 
     # Advanced Settings
     def advanced_settings_event(self):
-        while not self.done:
-            if not self.readingNow:
-                self.screen.advanced_settings_event_screen()
-                pg.display.update()
-                pg.event.clear()
-                pg.event.wait()
+        try:
+            while not self.done:
                 if not self.readingNow:
-                    for event in pg.event.get():
-                        self.checkQuit(event.type)
-                        if event.type == pg.MOUSEBUTTONDOWN:
-                            button = self.screen.checkCollision(event.pos)
-                            if button is 5:
-                                return
-                            elif button is 3:
-                                #re-register - clears all the input data of piName, secret key, and account
-                                if self.screen.reregister() is True:
-                                    self.conn.resetAccount()
+                    self.screen.advanced_settings_event_screen()
+                    pg.display.update()
+                    pg.event.clear()
+                    pg.event.wait()
+                    if not self.readingNow:
+                        for event in pg.event.get():
+                            self.checkQuit(event.type)
+                            if event.type == pg.MOUSEBUTTONDOWN:
+                                button = self.screen.checkCollision(event.pos)
+                                if button is 5:
+                                    return
+                                elif button is 3:
+                                    #re-register - clears all the input data of piName, secret key, and account
+                                    if self.screen.reregister() is True:
+                                        self.conn.resetAccount()
+                                        jsonFile = self.conn.getConfigData()
+                                        piName = self.conn.getPiName()
+                                        for sensor in self.sensorList:
+                                            sensor.refresh(jsonFile, piName)
+                                        self.screen.drawMessage("Re-download the software")
+                                        time.sleep(4)
+                                        self.done = True
+                                    else:
+                                        self.screen.advanced_settings_event_screen()
+                                        pg.display.update()
+                                elif button is 4:
+                                    self.done = True
+                                    return
+                                else:
+                                    button = self.screen.checkCollisionSmallBtns(event.pos)
+                                    if button is 4:
+                                        files = []
+                                        for item in self.sensorList:
+                                            file2 = item.getFilename()[:-4]
+                                            files.append(file2 + "_log.csv")
+                                        self.conn.sendLogData(files)        
+        except:
+            pass                                                     
+
+    def settings_event(self):
+        try:
+            while not self.done:
+                if not self.readingNow:
+                    self.screen.settings_event_screen(self.conn.getEth0(), self.conn.getWlan0(),
+                        self.readsPerDay, self.daysToKeep)
+                    pg.display.update()
+                    pg.event.clear()
+                    pg.event.wait()
+                    if not self.readingNow:
+                        for event in pg.event.get():
+                            self.checkQuit(event.type)
+                            if event.type == pg.MOUSEBUTTONDOWN:
+                                button = self.screen.checkCollision(event.pos)
+                                if button is 5:
+                                    return
+                                elif button is 7:
+                                    self.advanced_settings_event()
+                                elif button is 2:
+                                    #refresh all sensors
                                     jsonFile = self.conn.getConfigData()
                                     piName = self.conn.getPiName()
                                     for sensor in self.sensorList:
                                         sensor.refresh(jsonFile, piName)
-                                    self.screen.drawMessage("Re-download the software")
-                                    time.sleep(4)
-                                    self.done = True
-                                else:
-                                    self.screen.advanced_settings_event_screen()
-                                    pg.display.update()
-                            elif button is 4:
-                                self.done = True
-                                return
-                            else:
-                                button = self.screen.checkCollisionSmallBtns(event.pos)
-                                if button is 4:
-                                    files = []
-                                    for item in self.sensorList:
-                                        file2 = item.getFilename()[:-4]
-                                        files.append(file2 + "_log.csv")
-                                    self.conn.sendLogData(files)                                                             
-
-    def settings_event(self):
-        while not self.done:
-            if not self.readingNow:
-                self.screen.settings_event_screen(self.conn.getEth0(), self.conn.getWlan0(),
-                    self.readsPerDay, self.daysToKeep)
-                pg.display.update()
-                pg.event.clear()
-                pg.event.wait()
-                if not self.readingNow:
-                    for event in pg.event.get():
-                        self.checkQuit(event.type)
-                        if event.type == pg.MOUSEBUTTONDOWN:
-                            button = self.screen.checkCollision(event.pos)
-                            if button is 5:
-                                return
-                            elif button is 7:
-                                self.advanced_settings_event()
-                            elif button is 2:
-                                #refresh all sensors
-                                jsonFile = self.conn.getConfigData()
-                                piName = self.conn.getPiName()
-                                for sensor in self.sensorList:
-                                    sensor.refresh(jsonFile, piName)
+        except:
+            pass
 
 
     # Screen shows "Taking Reads..."
     def taking_reads_loop(self):
-        while(self.readingNow):
-            self.screen.drawMessage("Taking Reads   ")
-            pg.display.update()
-            if(self.readingNow):
-                time.sleep(1)
-                self.screen.drawMessage("Taking Reads.  ")
+        try:
+            while(self.readingNow):
+                self.screen.drawMessage("Taking Reads   ")
                 pg.display.update()
-                if(self.readingNow):    
-                    time.sleep(1)                  
-                    self.screen.drawMessage("Taking Reads.. ")
+                if(self.readingNow):
+                    time.sleep(1)
+                    self.screen.drawMessage("Taking Reads.  ")
                     pg.display.update()
-                    if(self.readingNow):
-                        time.sleep(1)
-                        self.screen.drawMessage("Taking Reads...")
+                    if(self.readingNow):    
+                        time.sleep(1)                  
+                        self.screen.drawMessage("Taking Reads.. ")
                         pg.display.update()
                         if(self.readingNow):
                             time.sleep(1)
+                            self.screen.drawMessage("Taking Reads...")
+                            pg.display.update()
+                            if(self.readingNow):
+                                time.sleep(1)
+                self.screen.canvas.fill((0,0,0))
             self.screen.canvas.fill((0,0,0))
-        self.screen.canvas.fill((0,0,0))
+        except:
+            pass
 
     # Update Probe
     def update_event(self, sensor):
         while(1):
             if not self.readingNow:
-                    #try:
+                try:
                     self.screen.update_event_screen(sensor)
                     pg.display.update()
                     pg.event.clear()
@@ -249,26 +267,26 @@ class App(object):
                                     elif button is 5:
                                         return
                                     elif button is 8 or button is 4 or button is 3:
-                                        #try:
-                                        self.readingNow = True
-                                        takingReads = Thread(target=App.taking_reads_loop, args=(self,))
-                                        takingReads.start()
-                                        jsonFile = self.conn.getConfigData()
-                                        piName = self.conn.getPiName()
-                                        sensor.refresh(jsonFile, piName)                                              
-                                        sensor.takeRead(self.conn)
-                                        self.readingNow = False
-                                        #except:
-                                        #pass"""
+                                        try:
+                                            self.readingNow = True
+                                            takingReads = Thread(target=App.taking_reads_loop, args=(self,))
+                                            takingReads.start()
+                                            jsonFile = self.conn.getConfigData()
+                                            piName = self.conn.getPiName()
+                                            sensor.refresh(jsonFile, piName)                                              
+                                            sensor.takeRead(self.conn)
+                                            self.readingNow = False
+                                        except:
+                                            self.readingNow = False
                                         time.sleep(1)
                                         self.screen.update_event_screen(sensor)                                                                            
-                    #except:
-                    #pass
+                except:
+                    pass
 
     # Switches between the event loops depending on button pressed  
     def main_event_loop(self):
             while not self.done:
-                    #try:
+                try:
                     if not self.readingNow:
                         self.screen.main_menu_screen(self.condSensor.getCurrRead(), 
                             self.dOSensor.getCurrRead(), self.phSensor.getCurrRead(), 
@@ -291,8 +309,8 @@ class App(object):
                                         self.update_event(self.phSensor)
                                     elif button is 4:
                                         self.update_event(self.tempSensor)
-                    #except:
-                    #pass
+                except:
+                    pass
 
 # Initializes pygame and starts touchscreen loop
 def main():

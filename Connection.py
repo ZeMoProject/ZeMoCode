@@ -18,9 +18,11 @@ class Connection(object):
         self.screen = Screen()
         self.eth0 = self.get_ip("eth0")
         self.wlan0 = self.get_ip("wlan0")
-
-        with open("/home/pi/ZeMoCode/ACCOUNT") as f:
-            self.account = f.read()
+        try:
+            with open("/home/pi/ZeMoCode/ACCOUNT") as f:
+                self.account = f.read()
+        except:
+            self.account = "NULL"
         self.piName = socket.gethostname()
         try:
             self.accountJSON = json.load(open('/home/pi/ZeMoCode/account.json'))
@@ -30,9 +32,14 @@ class Connection(object):
         self.jsonConfig = self.getConfigData()
 
     def resetAccount(self):
-        #TODO update test to be the proper folder and all other subsequent calls
-        os.remove("/home/pi/ZeMoCode/account.json")
-        os.remove("/home/pi/ZeMoCode/ACCOUNT")
+        try:
+            os.remove("/home/pi/ZeMoCode/account.json")
+        except:
+            pass
+        try:
+            os.remove("/home/pi/ZeMoCode/ACCOUNT")
+        except:
+            pass
         self.account = ""
         self.secret = ""
         self.piName = ""
@@ -142,7 +149,6 @@ class Connection(object):
 
     def sendEmail(self, message):
         try:
-
             values = {
                     'body' : message
                     }
@@ -153,7 +159,7 @@ class Connection(object):
             req = urllib.request.Request(emailEndPoint, data=params,
                         headers={'content-type': 'application/json', 'Authorization': bearer})
             response = urllib.request.urlopen(req)
-        except Exception:
+        except:
             pass
 
     # Sends an email of the probes out of range with the associated data
@@ -174,7 +180,7 @@ class Connection(object):
             req = urllib.request.Request(emailEndPoint, data=params,
                         headers={'content-type': 'application/json', 'Authorization': bearer})
             response = urllib.request.urlopen(req)   
-        except Exception:
+        except:
             pass     
 
     def register(self):
@@ -224,7 +230,7 @@ class Connection(object):
             f.write("\nend write")
             
             f.close()
-        except Exception:
+        except:
             f.close()
             self.screen.drawMessage("Unable to Register") 
             time.sleep(2)
@@ -239,5 +245,5 @@ class Connection(object):
                 0x8915,
                 struct.pack('256s', bytes(network[:15], 'utf-8'))
             )[20:24])
-        except Exception:
+        except:
             pass
