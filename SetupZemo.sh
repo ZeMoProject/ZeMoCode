@@ -11,9 +11,10 @@ fi
 
 #Set account
 read -p "ZeMo account name (Used to connect to online resources): " account
-cat $account > ~/ZeMoCode/ACCOUNT
+cat $account > ~/ZeMoCode/account
 
-#Move .profile to enable autostart
+#Move .profile to enable autostart (doesn't work...)
+cp -f ~/ZeMoCode/libfm.conf ~/.config/libfm/libfm.conf
 cp ~/ZeMoCode/profile ~/.profile
 cp ~/ZeMoCode/ZeMo.desktop ~/Desktop/
 chmod 777 ~/Destop/ZeMo.desktop
