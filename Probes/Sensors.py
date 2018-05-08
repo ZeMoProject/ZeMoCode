@@ -4,7 +4,7 @@ import RPi.GPIO as GPIO
 import serial # Required for communication with boards
 import socket, struct, fcntl
 import time
-
+import decimal
 import os, sys, re
 import requests
 
@@ -102,10 +102,8 @@ class Sensors(object):
                     data = self.i2sensor.query('R')
                     if data != "":
                         read2 = float(data.split(",")[0])
-                        retRead = round(read2, 1)
-                        data = str(retRead)
+                        data = str(format(decimal.Decimal(read2), '.1f'))    
                         return data
-                return data
             else:
                 return "-1"
         except:
@@ -127,8 +125,8 @@ class Sensors(object):
                             read = self.getRead()
                             read2 = float(read.split(",")[0])
                             if(read2 != -1 and read2 != 0):
-                                reads.append(float(round(read2, 1)))
-                                reads2.append(str(round(read2, 1)))
+                                reads.append(float(format(decimal.Decimal(read2), '.1f')))
+                                reads2.append(str(format(decimal.Decimal(read2), '.1f')))
                         except Exception as y:
                             errorstring = ": Error: %s" % str(y)
                             #print(errorstring)
@@ -137,8 +135,8 @@ class Sensors(object):
                                 read = self.getRead()
                                 read2 = read.split(",")[0]
                                 if(read2 != -1 and read2 != 0):
-                                    reads.append(float(round(read2, 1)))
-                                    reads2.append(str(round(read2, 1)))
+                                    reads.append(float(format(decimal.Decimal(read2), '.1f')))
+                                    reads2.append(str(format(decimal.Decimal(read2), '.1f')))
                             except Exception as y:
                                 errorstring = ": Error: %s" % str(y)
                                 #print(errorstring)
@@ -156,18 +154,18 @@ class Sensors(object):
                         avgRead = float(sum(reads))/len(reads)
                     else:
                         avgRead = 0
-                    self.currRead = str(round(avgRead,1))    
+                    self.currRead = str(format(decimal.Decimal(avgRead), '.1f'))    
                     outFile = open(self.filename, 'a')
                     file2 = self.filename[:-4]
                     outFileLog = open(file2 + "_log.csv", 'a')
                     if self.units != None:
-                        reads.append(str(self.probe) + ": " + str(round(avgRead, 1)) + " " + self.units)
+                        reads.append(str(self.probe) + ": " + self.getCurrRead() + " " + self.units)
                     else:
-                        reads.append(str(self.probe) + ": " + str(round(avgRead, 1)))
-                    outFile.write(str(t * 1000) + "," + str(self.lowRange) + ";" + str(round(avgRead, 1)) + ";" + str(self.highRange))
+                        reads.append(str(self.probe) + ": " + self.getCurrRead())
+                    outFile.write(str(t * 1000) + "," + str(self.lowRange) + ";" + self.getCurrRead() + ";" + str(self.highRange))
                     outFile.write("\n")
                     outFile.close()
-                    outFileLog.write(str(t * 1000) + "," + str(self.lowRange) + ";" + str(round(avgRead, 1)) + ";" + str(self.highRange))
+                    outFileLog.write(str(t * 1000) + "," + str(self.lowRange) + ";" + self.getCurrRead() + ";" + str(self.highRange))
                     outFileLog.write("\n")
                     outFileLog.close()
                     s = ""
