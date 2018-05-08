@@ -115,9 +115,7 @@ class Sensors(object):
     def takeRead(self, conn):
         try:
             if(self.i2cAddress != -1):
-                    #TESTING
-                    maxTries = 4
-                    #maxTries = 10
+                    maxTries = 10
                     reads = []
                     reads2 = []	 
                     avgRead = 0

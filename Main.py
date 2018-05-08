@@ -103,7 +103,7 @@ class App(object):
     # A constantly running loop that has an individual thread
     # Checks the time for taking automated reads
     def checkTime_loop(self):
-        while(self.done != True):
+        while not self.done:
             try:
                 currMin = datetime.now().minute
                 currHour = datetime.now().hour
@@ -126,26 +126,18 @@ class App(object):
                     if(self.waitTime > 59):
                         self.waitTime = 0
                     self.readingNow = True
-                    #try:
-                    takingReads = Thread(target=App.taking_reads_loop, args=(self,))
-                    takingReads.start()
-                    #    #screens = {0 : self.main_menu_screen(),
-                    #    #           1 : self.update_event_screen("Temperature", "tp", self.temperature),
-                    #    #           2 : self.numpad_event_screen("Low", "lowRange", 0),
-                    #    #           3 : self.settings_event_screen(),
-                    #    #           4 : self.advanced_settings_event_screen(),
-                    #    #}
-                    #    #screens[self.currScreen]()
-                    #except:
-                    #    self.readingNow = False
-                    #    pass
+                    try:
+                        takingReads = Thread(target=App.taking_reads_loop, args=(self,))
+                        takingReads.start()
+                    except:
+                        self.screen.drawMessage("Taking Reads")
                     self.takeReads_checkAlarms()
                     pg.event.clear()
                     self.readingNow = False
                     time.sleep(2)
                 elif self.waitTime < int(currMin) and self.waitTime != 0:
                     self.takeReadFlag = True
-            except Exception as e:
+            except:
                 self.readingNow = False
                 pass
 
@@ -254,7 +246,7 @@ class App(object):
 
     # Update Probe
     def update_event(self, sensor):
-        while(1):
+        while not self.done:
             if not self.readingNow:
                 try:
                     self.screen.update_event_screen(sensor)
@@ -331,10 +323,9 @@ def main():
 if __name__ == "__main__":
     main()
 
-""" Urgent """
-#TODO - reinstitute try/catch to all portions of code
 """ Screen """
 #TODO - global variable with the current screen on it, so the checktime loop can 
 #   redraw the screen after taking scheduled readings
 """ Other """
 #TODO - timeout thread, returns to main screen and blacks out
+#TODO - logging file

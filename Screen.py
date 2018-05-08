@@ -14,7 +14,6 @@ class Screen(object):
     def __init__(self):
         pg.display.set_caption(CAPTION)
         pg.display.set_mode(SCREEN_SIZE)
-        #TESTING
         pg.display.toggle_fullscreen()
         self.canvas = pg.display.get_surface()
         self.background = pygame.Surface(self.canvas.get_size())
