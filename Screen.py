@@ -6,9 +6,9 @@ import time
 
 # Configures parameters
 CAPTION = "Current Reads"
-SCREEN_SIZE = (320, 240)
-SCREEN_WIDTH = 320
-SCREEN_HEIGHT = 240
+SCREEN_SIZE = (640, 480)
+SCREEN_WIDTH = 640
+SCREEN_HEIGHT = 480
 
 class Screen(object):
     def __init__(self):
@@ -147,12 +147,14 @@ class Screen(object):
 
             color = pg.Color("plum1")
             self.drawText("EXIT", 20, color, self.btmRight, 0, 0)
-            self.drawText("Email Data", 20, color, self.middleBtn, 0, 0)
+            self.drawText("Email History", 20, color, self.topLeft, 0, 0)
             self.drawText("Re-Register", 20, color, self.btmLeft, 0, 0)
+            self.drawText("Remove History", 20, color, self.topRight, 0, 0)
 
             pg.gfxdraw.rectangle(self.canvas, self.btmLeft, color)
             pg.gfxdraw.rectangle(self.canvas, self.btmRight, color)
-            pg.gfxdraw.rectangle(self.canvas, self.middleBtn, color)
+            pg.gfxdraw.rectangle(self.canvas, self.topRight, color)
+            pg.gfxdraw.rectangle(self.canvas, self.topLeft, color)
 
             self.drawTitle("Advanced Settings", 20, color)            
 
@@ -240,10 +242,10 @@ class Screen(object):
             self.drawText("Cond:", 20, color, self.topLeft, 0, -10)
             self.drawText("DO:", 20, color, self.topRight, 0, -10)
             self.drawText("Temp:", 20, color, self.btmRight, 0, -10)
-            self.drawText(str(condRead), 20, color, self.topLeft, 0, 10)
-            self.drawText(str(phRead), 20, color, self.btmLeft, 0, 10)
-            self.drawText(str(dORead), 20, color, self.topRight, 0, 10)
-            self.drawText(str(tempRead), 20, color, self.btmRight, 0, 10)            
+            self.drawText(condRead, 20, color, self.topLeft, 0, 10)
+            self.drawText(phRead, 20, color, self.btmLeft, 0, 10)
+            self.drawText(dORead, 20, color, self.topRight, 0, 10)
+            self.drawText(tempRead, 20, color, self.btmRight, 0, 10)            
                        
             pg.gfxdraw.rectangle(self.canvas, self.topLeft, color)
             pg.gfxdraw.rectangle(self.canvas, self.btmLeft, color)

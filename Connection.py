@@ -230,6 +230,7 @@ class Connection(object):
             f.write("\nend write")
             
             f.close()
+            self.screen.drawImage("logo.png", self.screen.background.get_rect(), 223, 57)        
         except:
             f.close()
             self.screen.drawMessage("Unable to Register") 

@@ -24,8 +24,8 @@ class App(object):
     def __init__(self):
         print("ZeMo Initializing")
         self.screen = Screen()
-        self.conn = Connection()
         self.screen.drawImage("logo.png", self.screen.background.get_rect(), 223, 57)
+        self.conn = Connection()
         self.done = False
         self.takeReadFlag = True
         self.readingNow = False
@@ -44,6 +44,8 @@ class App(object):
         self.sensorList.append(self.dOSensor)
         self.sensorList.append(self.tempSensor)
         self.sensorList.append(self.phSensor)
+        for sensor in self.sensorList:
+            sensor.takeRead(self.conn)
         self.t2 = Thread(target=App.checkTime_loop, args=(self,))
         self.t2.start()
         self.update_reads_per_day()        
@@ -163,6 +165,20 @@ class App(object):
                                 button = self.screen.checkCollision(event.pos)
                                 if button is 5:
                                     return
+                                elif button is 1:
+                                    files = []
+                                    for item in self.sensorList:
+                                        file2 = item.getFilename()[:-4]
+                                        files.append(file2 + "_log.csv")
+                                    self.conn.sendLogData(files)
+                                    self.screen.drawMessage("Log Files Emailed")                                      
+                                elif button is 2:
+                                    for item in self.sensorList:
+                                        item.deleteHistory()
+                                    self.screen.drawMessage("Data removed")
+                                    time.sleep(2)
+                                    self.screen.drawMessage("Next sync will update graphs")
+                                    time.sleep(2)
                                 elif button is 3:
                                     #re-register - clears all the input data of piName, secret key, and account
                                     if self.screen.reregister() is True:
@@ -179,15 +195,7 @@ class App(object):
                                         pg.display.update()
                                 elif button is 4:
                                     self.done = True
-                                    return
-                                else:
-                                    button = self.screen.checkCollisionSmallBtns(event.pos)
-                                    if button is 4:
-                                        files = []
-                                        for item in self.sensorList:
-                                            file2 = item.getFilename()[:-4]
-                                            files.append(file2 + "_log.csv")
-                                        self.conn.sendLogData(files)        
+                                    return      
         except:
             pass                                                     
 

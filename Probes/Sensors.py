@@ -37,7 +37,7 @@ class Sensors(object):
             self.highRange = jsonFile["settings"][self.tag][1]
             self.data = []
             self.daysToKeep = jsonFile["settings"]["days"]
-            self.readsPerDay = jsonFile["settings"]["reads"]            
+            self.readsPerDay = jsonFile["settings"]["reads"]     
         except:
             self.currRead = "-1"
             self.lowRange = "-1"
@@ -53,7 +53,7 @@ class Sensors(object):
         return self.currRead
 
     def setFilename(self, piName):
-        self.filename = piName + "_" + self.getTag() + "_data.csv"
+        self.filename = "/home/pi/ZeMoCode/Data/" + piName + "_" + self.getTag() + "_data.csv"
 
     def setUnits(self, units):
         self.units = units
@@ -135,12 +135,12 @@ class Sensors(object):
                             errorstring = ": Error: %s" % str(y)
                             #print(errorstring)
                             try:
-                            self.i2sensor.set_i2c_address(self.i2cAddress)
-                            read = self.getRead()
-                            read2 = read.split(",")[0]
-                            if(read2 != -1 and read2 != 0):
-                                reads.append(float(round(read2, 1)))
-                                reads2.append(str(round(read2, 1)))
+                                self.i2sensor.set_i2c_address(self.i2cAddress)
+                                read = self.getRead()
+                                read2 = read.split(",")[0]
+                                if(read2 != -1 and read2 != 0):
+                                    reads.append(float(round(read2, 1)))
+                                    reads2.append(str(round(read2, 1)))
                             except Exception as y:
                                 errorstring = ": Error: %s" % str(y)
                                 #print(errorstring)
@@ -158,7 +158,7 @@ class Sensors(object):
                         avgRead = float(sum(reads))/len(reads)
                     else:
                         avgRead = 0
-                    self.currRead = avgRead    
+                    self.currRead = str(round(avgRead,1))    
                     outFile = open(self.filename, 'a')
                     file2 = self.filename[:-4]
                     outFileLog = open(file2 + "_log.csv", 'a')
@@ -244,3 +244,10 @@ class Sensors(object):
             return False
         except:
             return False
+
+    # Removes data files
+    def deleteHistory(self):
+        try:
+            os.remove(self.filename)
+        except:
+            pass
