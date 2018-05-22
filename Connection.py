@@ -16,7 +16,7 @@ from Screen import Screen
 
 class Connection(object):
     def __init__(self):
-        logging.basicConfig(filename="/home/pi/ZeMoCode/ZeMo.log", level=logging.INFO)
+        logging.basicConfig(filename="/home/pi/ZeMoCode/Data/ZeMo.log", level=logging.INFO)
         self.screen = Screen()
         self.eth0 = self.get_ip("eth0")
         self.wlan0 = self.get_ip("wlan0")
