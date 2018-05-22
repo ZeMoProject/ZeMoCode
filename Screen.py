@@ -4,16 +4,15 @@ import pygame as pg
 import pygame.gfxdraw
 import time
 
-# Configures parameters
-CAPTION = "Current Reads"
-SCREEN_SIZE = (640, 480)
-SCREEN_WIDTH = 640
-SCREEN_HEIGHT = 480
-
 class Screen(object):
     def __init__(self):
+        CAPTION = "Current Reads"
         pg.display.set_caption(CAPTION)
-        pg.display.set_mode(SCREEN_SIZE)
+        screenInfo = pg.display.Info()
+        self.SCREEN_SIZE = (screenInfo.current_w, screenInfo.current_h)
+        self.SCREEN_WIDTH = screenInfo.current_w
+        self.SCREEN_HEIGHT = screenInfo.current_h        
+        pg.display.set_mode(self.SCREEN_SIZE)
         pg.display.toggle_fullscreen()
         self.canvas = pg.display.get_surface()
         self.background = pygame.Surface(self.canvas.get_size())
@@ -75,14 +74,14 @@ class Screen(object):
 
     def convertWidth(self, size):
         try:
-            width = (size/320) * SCREEN_WIDTH
+            width = (size/320) * self.SCREEN_WIDTH
             return width
         except:
             return 10
 
     def convertHeight(self, size):
         try:
-            height = (size/240) * SCREEN_HEIGHT
+            height = (size/240) * self.SCREEN_HEIGHT
             return height
         except:
             return 10
@@ -146,9 +145,11 @@ class Screen(object):
 
             color = pg.Color("plum1")
             self.drawText("EXIT", 20, color, self.btmRight, 0, 0)
-            self.drawText("Email History", 20, color, self.topLeft, 0, 0)
+            self.drawText("Email", 20, color, self.topLeft, 0, -10)
+            self.drawText("History", 20, color, self.topLeft, 0, +10)            
             self.drawText("Re-Register", 20, color, self.btmLeft, 0, 0)
-            self.drawText("Remove History", 20, color, self.topRight, 0, 0)
+            self.drawText("Remove", 20, color, self.topRight, 0, -10)
+            self.drawText("History", 20, color, self.topRight, 0, +10)
 
             pg.gfxdraw.rectangle(self.canvas, self.btmLeft, color)
             pg.gfxdraw.rectangle(self.canvas, self.btmRight, color)

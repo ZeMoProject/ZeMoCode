@@ -22,7 +22,7 @@ from Probes.Temperature import Temperature
 
 class App(object):
     def __init__(self):
-        print("ZeMo Initializing")
+        print("ZeMo is Running")
         self.screen = Screen()
         self.screen.drawImage("logo.png", self.screen.background.get_rect(), 223, 57)
         self.conn = Connection()
@@ -40,10 +40,10 @@ class App(object):
         self.dOSensor = DissolvedOxygen(jsonFile, piName, self.screen)
         self.tempSensor = Temperature(jsonFile, piName, self.screen)
         self.sensorList = []
-        self.sensorList.append(self.condSensor)
-        self.sensorList.append(self.dOSensor)
         self.sensorList.append(self.tempSensor)
+        self.sensorList.append(self.condSensor)
         self.sensorList.append(self.phSensor)
+        self.sensorList.append(self.dOSensor)
         for sensor in self.sensorList:
             sensor.takeRead(self.conn)
         self.t2 = Thread(target=App.checkTime_loop, args=(self,))
@@ -56,8 +56,8 @@ class App(object):
                 self.done = True
                 self.screen.quit()
                 sys.exit()
-        except:
-            pass
+        except Exception as e:
+            self.conn.logError(e)
 
 	# Checks the values and emails if values are out of range, the ooR occurs here
     def takeReads_checkAlarms(self):
@@ -76,8 +76,8 @@ class App(object):
                     sensors.append(sensor)
             if len(sensors) > 0:
                 self.conn.sendOutofRange(sensors)
-        except:
-            pass
+        except Exception as e:
+            self.conn.logError(e)
 
     # Updates the list of times checked in the CheckTime() function
     def update_reads_per_day(self):
@@ -97,8 +97,8 @@ class App(object):
                     addTime = addHour + round(j, 2)
                     addThis = str(round(addTime, 2))
                     self.timeList.append(addThis)
-        except:
-            pass
+        except Exception as e:
+            self.conn.logError(e)
 
     # A constantly running loop that has an individual thread
     # Checks the time for taking automated reads
@@ -129,7 +129,8 @@ class App(object):
                     try:
                         takingReads = Thread(target=App.taking_reads_loop, args=(self,))
                         takingReads.start()
-                    except:
+                    except Exception as e:
+                        self.conn.logError(e)
                         self.screen.drawMessage("Taking Reads")
                     self.takeReads_checkAlarms()
                     pg.event.clear()
@@ -137,9 +138,9 @@ class App(object):
                     time.sleep(2)
                 elif self.waitTime < int(currMin) and self.waitTime != 0:
                     self.takeReadFlag = True
-            except:
+            except Exception as e:
+                self.conn.logError(e)
                 self.readingNow = False
-                pass
 
     # Advanced Settings
     def advanced_settings_event(self):
@@ -188,8 +189,8 @@ class App(object):
                                 elif button is 4:
                                     self.done = True
                                     return      
-        except:
-            pass                                                     
+        except Exception as e:
+            self.conn.logError(e)                                                     
 
     def settings_event(self):
         try:
@@ -215,8 +216,8 @@ class App(object):
                                     piName = self.conn.getPiName()
                                     for sensor in self.sensorList:
                                         sensor.refresh(jsonFile, piName)
-        except:
-            pass
+        except Exception as e:
+            self.conn.logError(e)
 
 
     # Screen shows "Taking Reads..."
@@ -241,8 +242,8 @@ class App(object):
                                 time.sleep(1)
                 self.screen.canvas.fill((0,0,0))
             self.screen.canvas.fill((0,0,0))
-        except:
-            pass
+        except Exception as e:
+            self.conn.logError(e)
 
     # Update Probe
     def update_event(self, sensor):
@@ -280,8 +281,8 @@ class App(object):
                                             self.readingNow = False
                                         time.sleep(1)
                                         self.screen.update_event_screen(sensor)                                                                            
-                except:
-                    pass
+                except Exception as e:
+                    self.conn.logError(e)
 
     # Switches between the event loops depending on button pressed  
     def main_event_loop(self):
@@ -309,8 +310,8 @@ class App(object):
                                         self.update_event(self.phSensor)
                                     elif button is 4:
                                         self.update_event(self.tempSensor)
-                except:
-                    pass
+                except Exception as e:
+                    self.conn.logError(e)
 
 # Initializes pygame and starts touchscreen loop
 def main():

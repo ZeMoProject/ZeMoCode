@@ -102,7 +102,7 @@ class Sensors(object):
                     data = self.i2sensor.query('R')
                     if data != "":
                         read2 = float(data.split(",")[0])
-                        data = str(format(decimal.Decimal(read2), '.1f'))    
+                        data = str(format(decimal.Decimal(read2), '.1f'))  
                         return data
             else:
                 return "-1"

@@ -6,6 +6,7 @@ import time
 import os
 import sys
 import re
+import logging
 import requests
 from subprocess import check_output
 import json
@@ -15,6 +16,7 @@ from Screen import Screen
 
 class Connection(object):
     def __init__(self):
+        logging.basicConfig(filename="/home/pi/ZeMoCode/ZeMo.log", level=logging.INFO)
         self.screen = Screen()
         self.eth0 = self.get_ip("eth0")
         self.wlan0 = self.get_ip("wlan0")
@@ -22,24 +24,32 @@ class Connection(object):
             with open("/home/pi/ZeMoCode/ACCOUNT") as f:
                 self.account = f.read()
         except:
-            self.account = "NULL"
+            self.account = "NULL_ACCOUNT_NAME"
+        if(self.account is "NULL_ACCOUNT_NAME"):
+            self.screen.drawMessage("No Account Found, Please Retry")
+            self.logInfo("No account found")
         self.piName = socket.gethostname()
         try:
             self.accountJSON = json.load(open('/home/pi/ZeMoCode/account.json'))
             self.secret = self.accountJSON["secret"]        
         except:
             self.register()
-        self.jsonConfig = self.getConfigData()
+        try:    
+            self.jsonConfig = self.getConfigData()
+        except:
+            self.logInfo("Did not grab config file")
+            self.register()
+        self.screen.drawImage("logo.png", self.screen.background.get_rect(), 223, 57)            
 
     def resetAccount(self):
         try:
             os.remove("/home/pi/ZeMoCode/account.json")
-        except:
-            pass
+        except Exception as e:
+            self.logError(e)        
         try:
             os.remove("/home/pi/ZeMoCode/ACCOUNT")
-        except:
-            pass
+        except Exception as e:
+            self.logError(e)
         self.account = ""
         self.secret = ""
         self.piName = ""
@@ -121,6 +131,7 @@ class Connection(object):
             self.screen.drawMessage("Log Data Sent!")
             time.sleep(2)
         except Exception as e:
+            self.logError(e)
             self.screen.drawMessage("Did not send email")
             time.sleep(2)
 
@@ -132,9 +143,14 @@ class Connection(object):
             req = requests.get(url=url, headers=headers)
             return req.json()
               
-        except:
+        except Exception as e:
+            self.logError(e)
             self.screen.drawMessage("Failed to grab Settings")
-            time.sleep(2)     
+            time.sleep(1)     
+            self.screen.drawMessage("Make sure to 'Accept'")
+            time.sleep(3)
+            self.register()
+            pass
 
     def sendReadings(self, values):
         try:
@@ -144,8 +160,8 @@ class Connection(object):
             req = urllib.request.Request(emailEndPoint, data=params,
                         headers={'content-type': 'application/json', 'Authorization': bearer})
             response = urllib.request.urlopen(req)   
-        except:
-            pass   
+        except Exception as e:
+            self.logError(e)  
 
     def sendEmail(self, message):
         try:
@@ -159,8 +175,8 @@ class Connection(object):
             req = urllib.request.Request(emailEndPoint, data=params,
                         headers={'content-type': 'application/json', 'Authorization': bearer})
             response = urllib.request.urlopen(req)
-        except:
-            pass
+        except Exception as e:
+            self.logError(e)
 
     # Sends an email of the probes out of range with the associated data
     def sendOutofRange(self, sensors):
@@ -180,61 +196,50 @@ class Connection(object):
             req = urllib.request.Request(emailEndPoint, data=params,
                         headers={'content-type': 'application/json', 'Authorization': bearer})
             response = urllib.request.urlopen(req)   
-        except:
-            pass     
+        except Exception as e:
+            self.logError(e)     
 
     def register(self):
         try:
-            f = open("/home/pi/ZeMoCode/log.txt", "a")
-            f.write("\nTesting:")
-            values = {
-                    "account" : self.account,
-                    "name" : self.piName,
-                    "ip_address" : self.get_ip("wlan0")
-                    }
-            f.write("ip")
-            f.write(self.get_ip("wlan0"))
-            f.write("\naccount:")
-            f.write(self.account)
-            f.write("\npiName:")
-            f.write(self.piName)
+            try:
+                values = {
+                        "account" : self.account,
+                        "name" : self.piName,
+                        "ip_address" : self.get_ip("wlan0")
+                        }
 
-            url = 'https://zemoproject.org/register'
-            params = json.dumps(values)
-            headers={'content-type': 'application/json'}            
-            req = requests.post(url=url, json=values,headers=headers)
-            f.write("\nposted reqs")
-            f.write("\nattempt print screen")
-
-            self.screen.register_screen()
-            f.write("\nprinted screen")
-
-            sec = req.json()   
-            f.write("\nsecret:")
-            #f.write(sec)
-            self.secret = sec["secret"]
+                url = 'https://zemoproject.org/register'
+                params = json.dumps(values)
+                headers={'content-type': 'application/json'}            
+                req = requests.post(url=url, json=values,headers=headers)
+                sec = req.json()   
+                self.secret = sec["secret"]                 
+            except:           
+                self.accountJSON = json.load(open('/home/pi/ZeMoCode/account.json'))
+                self.secret = self.accountJSON["secret"]  
+            self.screen.register_screen()            
             
             cfg = { 
                 "secret" : self.secret,
                 "account" : self.account,
                 "piName" : self.piName
             }
-            f.write("\nopen file cfg")
-            f.close()
             with open("/home/pi/ZeMoCode/account.json", "w") as g:
                 json.dump(cfg, g)
-            f = open("/home/pi/ZeMoCode/log.txt", "a")                
-            f.write("\nclose cfg")
                             
             self.accountJSON = json.load(open('/home/pi/ZeMoCode/account.json'))
-            f.write("\nend write")
-            
-            f.close()
-            self.screen.drawImage("logo.png", self.screen.background.get_rect(), 223, 57)        
-        except:
-            f.close()
-            self.screen.drawMessage("Unable to Register") 
-            time.sleep(2)
+            self.screen.canvas.fill((0,0,0))
+            try:    
+                self.jsonConfig = self.getConfigData()
+                self.screen.drawImage("logo.png", self.screen.background.get_rect(), 223, 57)            
+            except:  
+                self.register()                  
+        except Exception as e:
+            self.logError(e)     
+            self.screen.drawMessage("Failed to grab Settings")
+            time.sleep(1)     
+            self.screen.drawMessage("Make sure to 'Accept'")
+            time.sleep(3)
             self.register()
 
     # Returns IP address of pi
@@ -246,5 +251,19 @@ class Connection(object):
                 0x8915,
                 struct.pack('256s', bytes(network[:15], 'utf-8'))
             )[20:24])
+        except Exception as e:
+            self.logError(e)
+
+    # Logging errors
+    def logError(self, info):
+        try:
+            logging.exception(str(info))
+        except:
+            pass
+
+    # Loggin Info
+    def logInfo(self, info):
+        try:
+            logging.info(str(info))
         except:
             pass
