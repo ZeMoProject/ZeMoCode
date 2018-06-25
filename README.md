@@ -62,10 +62,7 @@ network administrator.
 		3. **270 degrees (landscape)**
 		4. 0 degrees (portait)
 	- Would you like the console to appear on the PiTFT display? [y/n] **n**
-<<<<<<< Updated upstream
 	- Would you like the HDMI display to mirror to the PiTFT display? [y/n] **y**
-=======
->>>>>>> Stashed changes
 	- REBOOT NOW? [y/N] **y**
 14. After restarting, reconnect by ssh (see step 7)
 15. Run command: sudo raspi-config
