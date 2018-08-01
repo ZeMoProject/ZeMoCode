@@ -17,7 +17,7 @@ cat $account > ~/ZeMoCode/account
 cp -f ~/ZeMoCode/libfm.conf ~/.config/libfm/libfm.conf
 cp ~/ZeMoCode/profile ~/.profile
 cp ~/ZeMoCode/ZeMo.desktop ~/Desktop/
-chmod 777 ~/Destop/ZeMo.desktop
+chmod 777 ~/Desktop/ZeMo.desktop
 
 #Install monitor drivers
 wget https://raw.githubusercontent.com/adafruit/Raspberry-Pi-Installer-Scripts/master/adafruit-pitft.sh
