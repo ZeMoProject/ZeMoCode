@@ -23,4 +23,9 @@ chmod 777 ~/Destop/ZeMo.desktop
 wget https://raw.githubusercontent.com/adafruit/Raspberry-Pi-Installer-Scripts/master/adafruit-pitft.sh
 chmod +x adafruit-pitft.sh
 sudo ./adafruit-pitft.sh
+
+#Auto Start ZeMo on boot
 chmod +x ~/ZeMoCode/Main.py
+mkdir ~/.config/autostart
+touch ~/.config/autostart/ZeMo.desktop
+cp ~/ZeMoCode/ZeMo.desktop ~/.config/autostart/
