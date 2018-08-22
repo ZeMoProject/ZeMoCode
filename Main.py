@@ -329,4 +329,3 @@ if __name__ == "__main__":
 #   redraw the screen after taking scheduled readings
 """ Other """
 #TODO - timeout thread, returns to main screen and blacks out
-#TODO - logging file

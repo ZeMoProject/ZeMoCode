@@ -271,8 +271,8 @@ class Screen(object):
                 pg.event.clear()
                 pg.event.wait()
                 for event in pg.event.get():
-                    if event.type is pg.MOUSEBUTTONDOWN: 
-                        if self.centerBtn.collidepoint(event.pos):
+                    if event.type is pg.MOUSEBUTTONDOWN:
+                        if self.centerBtn.collidepoint(event.pos):                         
                             return
         except:
             pass

@@ -18,21 +18,25 @@ class Connection(object):
     def __init__(self):
         logging.basicConfig(filename="/home/pi/ZeMoCode/Data/ZeMo.log", level=logging.INFO)
         self.screen = Screen()
-        self.eth0 = self.get_ip("eth0")
-        self.wlan0 = self.get_ip("wlan0")
+        self.eth0 = self.get_ip("eth0", 3)
+        self.wlan0 = self.get_ip("wlan0", 3)
         try:
-            with open("/home/pi/ZeMoCode/ACCOUNT") as f:
-                self.account = f.read()
+            with open("/home/pi/ZeMoCode/account") as f:
+                acnt = f.read()
+                self.account = acnt.strip('\n')
+                self.logInfo("ACCOUNT " + self.account)                
         except:
             self.account = "NULL_ACCOUNT_NAME"
         if(self.account is "NULL_ACCOUNT_NAME"):
             self.screen.drawMessage("No Account Found, Please Retry")
             self.logInfo("No account found")
+            time.sleep(30)
         self.piName = socket.gethostname()
         try:
             self.accountJSON = json.load(open('/home/pi/ZeMoCode/account.json'))
             self.secret = self.accountJSON["secret"]        
         except:
+            self.secret = "none"
             self.register()
         try:    
             self.jsonConfig = self.getConfigData()
@@ -47,7 +51,7 @@ class Connection(object):
         except Exception as e:
             self.logError(e)        
         try:
-            os.remove("/home/pi/ZeMoCode/ACCOUNT")
+            os.remove("/home/pi/ZeMoCode/account")
         except Exception as e:
             self.logError(e)
         self.account = ""
@@ -77,7 +81,7 @@ class Connection(object):
 
     # Emails ip address
     def sendIP(self):
-        message = "zfish1 is up and running at (wired, wireless): " + self.get_ip("wlan0")
+        message = "zfish1 is up and running at (wired, wireless): " + self.getWlan0()
         self.sendEmail(message)
 
     # Emails the sensors that are not working
@@ -144,6 +148,9 @@ class Connection(object):
             return req.json()
               
         except Exception as e:
+            self.logInfo("account: " + str(self.account))
+            self.logInfo("piName: " + str(self.piName))
+            self.logInfo("ip: " + str(self.getWlan0()))            
             self.logError(e)
             self.screen.drawMessage("Failed to grab Settings")
             time.sleep(1)     
@@ -205,20 +212,23 @@ class Connection(object):
                 values = {
                         "account" : self.account,
                         "name" : self.piName,
-                        "ip_address" : self.get_ip("wlan0")
+                        "ip_address" : self.getWlan0()
                         }
 
                 url = 'https://zemoproject.org/register'
                 params = json.dumps(values)
                 headers={'content-type': 'application/json'}            
                 req = requests.post(url=url, json=values,headers=headers)
-                sec = req.json()   
+                sec = req.json() 
                 self.secret = sec["secret"]                 
-            except:           
+            except: 
+                self.logInfo(str(values))
+                self.logInfo("rec: " + str(req))                  
                 self.accountJSON = json.load(open('/home/pi/ZeMoCode/account.json'))
                 self.secret = self.accountJSON["secret"]  
             self.screen.register_screen()            
-            
+            self.screen.drawMessage("Attempting to Register")
+            time.sleep(2)
             cfg = { 
                 "secret" : self.secret,
                 "account" : self.account,
@@ -235,6 +245,9 @@ class Connection(object):
             except:  
                 self.register()                  
         except Exception as e:
+            self.logInfo("account: " + str(self.account))
+            self.logInfo("piName: " + str(self.piName))
+            self.logInfo("ip: " + str(self.getWlan0()))
             self.logError(e)     
             self.screen.drawMessage("Failed to grab Settings")
             time.sleep(1)     
@@ -243,16 +256,18 @@ class Connection(object):
             self.register()
 
     # Returns IP address of pi
-    def get_ip(self, network):
+    def get_ip(self, network, countdown):
         try:
-            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            return socket.inet_ntoa(fcntl.ioctl(
-                s.fileno(),
-                0x8915,
-                struct.pack('256s', bytes(network[:15], 'utf-8'))
-            )[20:24])
+            countdown = countdown - 1
+            if(countdown is not 0):
+                s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                return socket.inet_ntoa(fcntl.ioctl(
+                    s.fileno(),
+                    0x8915,
+                    struct.pack('256s', bytes(network[:15], 'utf-8'))
+                )[20:24])
         except Exception as e:
-            self.logError(e)
+            self.get_ip(network, countdown)
 
     # Logging errors
     def logError(self, info):
