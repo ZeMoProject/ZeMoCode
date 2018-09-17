@@ -13,7 +13,7 @@ class Screen(object):
         self.SCREEN_WIDTH = screenInfo.current_w
         self.SCREEN_HEIGHT = screenInfo.current_h        
         pg.display.set_mode(self.SCREEN_SIZE)
-        pg.display.toggle_fullscreen()
+        #pg.display.toggle_fullscreen()
         self.canvas = pg.display.get_surface()
         self.background = pygame.Surface(self.canvas.get_size())
         self.keys = pg.key.get_pressed()
@@ -264,16 +264,20 @@ class Screen(object):
             self.drawText("You must click \"Accept\" on the", 15, color, self.centerBtn, 0, -95) 
             self.drawText("\"Manage Your Connections\" screen", 15, color, self.centerBtn, 0, -80)
             self.drawText("before clicking on \"Register\"", 15, color, self.centerBtn, 0, -65)         
-            self.drawText("Register", 15, color, self.centerBtn, 0, 0)
-            pg.gfxdraw.rectangle(self.canvas, self.centerBtn, color)   
+            self.drawText("Register", 15, color, self.midLeft, 0, 0)
+            self.drawText("Request Again", 15, color, self.midRight, 0, 0)
+            pg.gfxdraw.rectangle(self.canvas, self.midLeft, color) 
+            pg.gfxdraw.rectangle(self.canvas, self.midRight, color)   
             pg.display.update()
             while(1):
                 pg.event.clear()
                 pg.event.wait()
                 for event in pg.event.get():
                     if event.type is pg.MOUSEBUTTONDOWN:
-                        if self.centerBtn.collidepoint(event.pos):                         
-                            return
+                        if self.midLeft.collidepoint(event.pos):                         
+                            return 1
+                        elif self.midRight.collidepoint(event.pos):
+                            return 2
         except:
             pass
     
