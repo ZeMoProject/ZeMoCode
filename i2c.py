@@ -1,5 +1,7 @@
 #!/usr/bin/python3.4
-#TODO add attribution to atlas scientific
+
+# Original code was obtained from AtlasScientific, license at bottom of file
+# Code modified to work with Python 3.4
 
 import io         # used to create file streams
 import fcntl      # used to access I2C parameters like addresses
@@ -46,7 +48,6 @@ class AtlasI2C:
             if ord(response[0]) == 1:             # if the response isn't an error
                 # change MSB to 0 for all received characters except the first and get a list of characters
                 char_list = map(lambda x: chr(ord(x) & ~0x80), list(response[1:]))
-                #print(''.join(char_list))
                 # NOTE: having to change the MSB to 0 is a glitch in the raspberry pi, and you shouldn't have to do this!
                 return ''.join(char_list)     # convert the char list to a string and returns it
             else:
@@ -89,3 +90,27 @@ class AtlasI2C:
     def close(self):
         self.file_read.close()
         self.file_write.close()
+
+"""
+The MIT License (MIT)
+
+Copyright (c) 2016 AtlasScientific
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""

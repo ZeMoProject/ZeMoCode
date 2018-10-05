@@ -20,7 +20,6 @@ class Connection(object):
         self.screen = Screen()
         self.eth0 = self.get_ip("eth0", 3)
         self.wlan0 = self.get_ip("wlan0", 3)
-        self.query = 0
         registered = False
         try:
             with open("/home/pi/ZeMoCode/account") as f:
@@ -28,6 +27,7 @@ class Connection(object):
                 self.account = acnt.strip('\n')
                 self.logInfo("ACCOUNT " + self.account)                
         except:
+            # Occurs if the account file did not create properly from SetupZeMo.sh file
             self.account = "NULL_ACCOUNT_NAME"
         if(self.account is "NULL_ACCOUNT_NAME"):
             self.screen.drawMessage("No Account Found, Please Retry")
@@ -35,29 +35,27 @@ class Connection(object):
             time.sleep(30)
         self.piName = socket.gethostname()
         try:
+            # Tries to load an existing account
             self.accountJSON = json.load(open('/home/pi/ZeMoCode/account.json'))
-            self.secret = self.accountJSON["secret"]        
+            self.secret = self.accountJSON["secret"]  
+            try:    
+                self.jsonConfig = self.getConfigData()
+            except:
+                self.logInfo("Did not grab config file")      
         except:
+            # Registers if no existing account is found
             self.secret = "none"
+            # Loops until registration is completed
             while registered is False:
-                self.register()
-        try:    
-            self.jsonConfig = self.getConfigData()
-        except:
-            self.logInfo("Did not grab config file")
-            while registered is False:
-                self.register()
+                registered = self.register()
         self.screen.drawImage("logo.png", self.screen.background.get_rect(), 223, 57)            
 
+    # Resets account info
     def resetAccount(self):
         try:
             os.remove("/home/pi/ZeMoCode/account.json")
         except Exception as e:
             self.logError(e)        
-        try:
-            os.remove("/home/pi/ZeMoCode/account")
-        except Exception as e:
-            self.logError(e)
         self.account = ""
         self.secret = ""
         self.piName = ""
@@ -143,24 +141,22 @@ class Connection(object):
             self.screen.drawMessage("Did not send email")
             time.sleep(2)
 
+    # Returns the user settings from the website
     def getConfigData(self):
         try:
             url = 'https://zemoproject.org/settings/' + self.account + '/' + self.piName
             bearer = 'Bearer ' + self.secret 
             headers={'content-type': 'application/json', 'Authorization': bearer}            
             req = requests.get(url=url, headers=headers)
-            return req.json()
-              
+            return req.json() 
         except Exception as e:
+            self.logInfo("In getConfigData")
             self.logInfo("account: " + str(self.account))
             self.logInfo("piName: " + str(self.piName))
             self.logInfo("ip: " + str(self.getWlan0()))            
             self.logError(e)
-            self.screen.drawMessage("Failed to grab Settings")
-            time.sleep(1)     
-            self.screen.drawMessage("Make sure to 'Accept'")
-            time.sleep(3)
 
+    # Sends the hourly readings
     def sendReadings(self, values):
         try:
             params = json.dumps(values).encode('utf8')
@@ -208,6 +204,7 @@ class Connection(object):
         except Exception as e:
             self.logError(e)     
 
+    # Sends registration info, pi should appear on website afterwards
     def sendRegister(self):
         try:
             values = {
@@ -226,23 +223,37 @@ class Connection(object):
         except:
             self.logInfo(str(values))
             self.logInfo("rec: " + str(req))
-            return False                    
-        
+            return False   
+
+    # Draws the registration screen and responds to user input
+    def screenRegisterResend(self):
+        resend = self.screen.register_screen()
+        if resend is False:
+            self.screen.drawMessage("Attempting to Register")
+        elif resend is True:
+            self.sendRegister()
+            self.screen.drawMessage("New Request Sent")
+        time.sleep(2)        
+
+    # Waits for user to push accept on the website
+    def waitForAccept(self):
+        try:    
+            self.jsonConfig = self.getConfigData()
+            if self.jsonConfig is None:
+                self.screenRegisterResend()
+                return False           
+            return True            
+        except:
+            self.screenRegisterResend()
+            return False             
+
+    # Registers pi
     def register(self):
         try:
-            if self.query is 3:
-                return
-            if self.sendRegister() is False:
-                try:
-                    self.accountJSON = json.load(open('/home/pi/ZeMoCode/account.json'))
-                    self.secret = self.accountJSON["secret"]
-                except:
-                    pass  
-            self.query = self.screen.register_screen()            
-            self.screen.drawMessage("Attempting to Register")
-            time.sleep(2)
-            if self.query is 2:
-                return False
+            self.sendRegister()
+            accepted = False
+            while accepted is False:
+                accepted = self.waitForAccept()            
             cfg = {
                 "secret" : self.secret,
                 "account" : self.account,
@@ -250,24 +261,20 @@ class Connection(object):
             }
             with open("/home/pi/ZeMoCode/account.json", "w") as g:
                 json.dump(cfg, g)
-            self.query = 3                
             self.accountJSON = json.load(open('/home/pi/ZeMoCode/account.json'))
             self.screen.canvas.fill((0,0,0))
-            try:    
-                self.jsonConfig = self.getConfigData()
-                self.screen.drawImage("logo.png", self.screen.background.get_rect(), 223, 57)            
-            except:  
-                return False  
+            self.screen.drawImage("logo.png", self.screen.background.get_rect(), 223, 57)                
             return True               
         except Exception as e:
+            self.logInfo("In Register Function")
             self.logInfo("account: " + str(self.account))
             self.logInfo("piName: " + str(self.piName))
             self.logInfo("ip: " + str(self.getWlan0()))
             self.logError(e)     
             self.screen.drawMessage("Failed to grab Settings")
-            time.sleep(1)     
+            time.sleep(2)     
             self.screen.drawMessage("Make sure to \"Accept\"")
-            time.sleep(3)
+            time.sleep(2)
             return False
 
     # Returns IP address of pi
@@ -281,7 +288,7 @@ class Connection(object):
                     0x8915,
                     struct.pack('256s', bytes(network[:15], 'utf-8'))
                 )[20:24])
-        except Exception as e:
+        except:
             self.get_ip(network, countdown)
 
     # Logging errors
@@ -291,7 +298,7 @@ class Connection(object):
         except:
             pass
 
-    # Loggin Info
+    # Logging Info
     def logInfo(self, info):
         try:
             logging.info(str(info))

@@ -188,6 +188,7 @@ class Sensors(object):
         except:
             return reads
 
+    # Sends commands to the chip
     def calibrateSensor(self, query):
         try:
             maxTries = 3

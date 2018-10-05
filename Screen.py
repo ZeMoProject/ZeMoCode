@@ -13,7 +13,7 @@ class Screen(object):
         self.SCREEN_WIDTH = screenInfo.current_w
         self.SCREEN_HEIGHT = screenInfo.current_h        
         pg.display.set_mode(self.SCREEN_SIZE)
-        #pg.display.toggle_fullscreen()
+        pg.display.toggle_fullscreen()
         self.canvas = pg.display.get_surface()
         self.background = pygame.Surface(self.canvas.get_size())
         self.keys = pg.key.get_pressed()
@@ -72,6 +72,7 @@ class Screen(object):
         self.submitBtn = pg.Rect(leftFour,numBtmTop,numWidth,backBtnH)
         self.deleteBtn = pg.Rect(leftFive,btmBtnTop,numWidth,backBtnH)
 
+    # Converts width of object for screen size
     def convertWidth(self, size):
         try:
             width = (size/320) * self.SCREEN_WIDTH
@@ -79,6 +80,7 @@ class Screen(object):
         except:
             return 10
 
+    # Converts height of object for screen size
     def convertHeight(self, size):
         try:
             height = (size/240) * self.SCREEN_HEIGHT
@@ -263,7 +265,9 @@ class Screen(object):
             self.drawTitle("Register Your Pi", 15, color)
             self.drawText("You must click \"Accept\" on the", 15, color, self.centerBtn, 0, -95) 
             self.drawText("\"Manage Your Connections\" screen", 15, color, self.centerBtn, 0, -80)
-            self.drawText("before clicking on \"Register\"", 15, color, self.centerBtn, 0, -65)         
+            self.drawText("before clicking on \"Register\"", 15, color, self.centerBtn, 0, -65)   
+            self.drawText("\"Request Again\" is for", 15, color, self.centerBtn, 0, 65) 
+            self.drawText("accidental pushing of \"REJECT\"", 15, color, self.centerBtn, 0, 80)
             self.drawText("Register", 15, color, self.midLeft, 0, 0)
             self.drawText("Request Again", 15, color, self.midRight, 0, 0)
             pg.gfxdraw.rectangle(self.canvas, self.midLeft, color) 
@@ -274,10 +278,11 @@ class Screen(object):
                 pg.event.wait()
                 for event in pg.event.get():
                     if event.type is pg.MOUSEBUTTONDOWN:
-                        if self.midLeft.collidepoint(event.pos):                         
-                            return 1
-                        elif self.midRight.collidepoint(event.pos):
-                            return 2
+                        if self.centerBtn.collidepoint(event.pos):
+                            if self.midLeft.collidepoint(event.pos):                         
+                                return False
+                            elif self.midRight.collidepoint(event.pos):
+                                return True       
         except:
             pass
     
@@ -304,6 +309,7 @@ class Screen(object):
         except:
             pass
 
+    # Draws an image
     def drawImage(self, imageName, location, width, height):
         try:
             image = pg.image.load("/home/pi/ZeMoCode/images/" + str(imageName))
@@ -342,6 +348,7 @@ class Screen(object):
         except:
             pass     
 
+    # Flashes a message on the screen
     def drawMessage(self, text):
         try:
             self.canvas.fill((0,0,0))        
@@ -355,6 +362,7 @@ class Screen(object):
             pg.display.update()                
         except:
             pass
+
     # For all screens except numpad
     def checkCollision(self, eventPos):
         if self.topLeft.collidepoint(eventPos):
@@ -386,6 +394,7 @@ class Screen(object):
         else:
             return 0        
 
+    # Checks for number button presses
     def checkNumpad(self, eventPos):
         if self.one.collidepoint(eventPos):
             return "1"
