@@ -22,14 +22,14 @@ cp ~/ZeMoCode/ZeMo.desktop ~/.config/autostart/
 chmod 777 ~/.config/autostart/ZeMo.desktop
 touch ~/.config/autostart/ZeMo.desktop
 
+#Install monitor drivers
+wget https://raw.githubusercontent.com/adafruit/Raspberry-Pi-Installer-Scripts/master/adafruit-pitft.sh
+chmod +x adafruit-pitft.sh
+sudo ./adafruit-pitft.sh
+
 sudo apt-get install xserver-xorg-video-fbdev
 cat 'Section "Device"  
   Identifier "myfb"
   Driver "fbdev"
   Option "fbdev" "/dev/fb1"
 EndSection' > /usr/share/X11/xorg.conf.d/99-fbdev.conf
-
-#Install monitor drivers
-wget https://raw.githubusercontent.com/adafruit/Raspberry-Pi-Installer-Scripts/master/adafruit-pitft.sh
-chmod +x adafruit-pitft.sh
-sudo ./adafruit-pitft.sh
