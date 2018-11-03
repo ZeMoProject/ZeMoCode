@@ -41,7 +41,11 @@ class Connection(object):
             try:    
                 self.jsonConfig = self.getConfigData()
             except:
-                self.logInfo("Did not grab config file") 
+                self.logInfo("Did not grab config file")
+            if self.secret is "none":
+                # Loops until registration is completed
+                while registered is False:
+                    registered = self.register()
         except Exception as e:
             # Registers if no existing account is found
             self.secret = "none"
