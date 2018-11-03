@@ -41,10 +41,8 @@ class Connection(object):
             try:    
                 self.jsonConfig = self.getConfigData()
             except:
-                self.logInfo("Did not grab config file")
-            if self.secret = "none":
-                raise Exception("Secret not found.")   
-        except:
+                self.logInfo("Did not grab config file") 
+        except Exception as e:
             # Registers if no existing account is found
             self.secret = "none"
             # Loops until registration is completed
@@ -241,7 +239,7 @@ class Connection(object):
     def waitForAccept(self):
         try:    
             self.jsonConfig = self.getConfigData()
-            if self.jsonConfig is None:
+            if self.jsonConfig is None or self.secret is "none":
                 self.screenRegisterResend()
                 return False           
             return True            
