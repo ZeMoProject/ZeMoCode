@@ -29,7 +29,7 @@ class Connection(object):
         except:
             # Occurs if the account file did not create properly from SetupZeMo.sh file
             self.account = "NULL_ACCOUNT_NAME"
-        if(self.account is "NULL_ACCOUNT_NAME"):
+        if self.account is "NULL_ACCOUNT_NAME":
             self.screen.drawMessage("No Account Found, Please Retry")
             self.logInfo("No account found")
             time.sleep(30)
@@ -41,7 +41,9 @@ class Connection(object):
             try:    
                 self.jsonConfig = self.getConfigData()
             except:
-                self.logInfo("Did not grab config file")      
+                self.logInfo("Did not grab config file")
+            if self.secret = "none":
+                raise Exception("Secret not found.")   
         except:
             # Registers if no existing account is found
             self.secret = "none"
