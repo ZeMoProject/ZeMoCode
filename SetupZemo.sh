@@ -13,13 +13,9 @@ fi
 read -p "ZeMo account name (Used to connect to online resources): " account
 echo "$account" | cat - "$account" > ~/ZeMoCode/account
 
-#Move .profile to enable autostart (doesn't work...)
-cp -f ~/ZeMoCode/libfm.conf ~/.config/libfm/libfm.conf
-cp ~/ZeMoCode/profile ~/.profile
+#Auto Start ZeMo on boot
 cp ~/ZeMoCode/ZeMo.desktop ~/Desktop/
 chmod 777 ~/Desktop/ZeMo.desktop
-
-#Auto Start ZeMo on boot
 chmod 777 ~/ZeMoCode/Main.py
 mkdir ~/.config/autostart
 cp ~/ZeMoCode/ZeMo.desktop ~/.config/autostart/
