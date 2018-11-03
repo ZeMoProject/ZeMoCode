@@ -63,6 +63,6 @@ network administrator.
 		2. 180 degrees (portait)
 		3. **270 degrees (landscape)**
 		4. 0 degrees (portait)
-	- Would you like the console to appear on the PiTFT display? [y/n] **n**
-	- Would you like the HDMI display to mirror to the PiTFT display? [y/n] **n**
+	- Would you like the console to appear on the PiTFT display? [y/N] **n**
+	- Would you like the HDMI display to mirror to the PiTFT display? [y/N] **y**
 	- REBOOT NOW? [y/N] **y**
