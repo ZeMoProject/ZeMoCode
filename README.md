@@ -46,9 +46,11 @@ particular network configuration. More information is available from here (https
 network administrator.
 9. Run command: sudo reboot
 10. After restarting, reconnect by ssh (see step 7)
-11. Run command: git clone https://github.com/ZeMoProject/ZeMoCode
-12. Run command: bash ~/ZeMoCode/SetupZemo.sh
-13. Respond to prompts:
+11. Run command: sudo raspi-config
+12. Change timezone, language, etc. for your location. See http://geek-university.com/raspberry-pi/internationalisation-options/ for more information.
+13. Run command: git clone https://github.com/ZeMoProject/ZeMoCode
+14. Run command: bash ~/ZeMoCode/SetupZemo.sh
+15. Respond to prompts:
 	- Enter ZeMo Account name. If you have not set one up, you may do so at zemoproject.org
 	- Select configuration:
 		1. **PiTFT 2.4", 2.8" or 3.2" resistive (240x320)**
@@ -62,8 +64,5 @@ network administrator.
 		3. **270 degrees (landscape)**
 		4. 0 degrees (portait)
 	- Would you like the console to appear on the PiTFT display? [y/n] **n**
-	- Would you like the HDMI display to mirror to the PiTFT display? [y/n] **y**
+	- Would you like the HDMI display to mirror to the PiTFT display? [y/n] **n**
 	- REBOOT NOW? [y/N] **y**
-14. After restarting, reconnect by ssh (see step 7)
-15. Run command: sudo raspi-config
-16. Change timezone, language, etc. for your location. See http://geek-university.com/raspberry-pi/internationalisation-options/ for more information.
